@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Qabulxona — MediCare Pro</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/variables.css">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/dashboard.css">
+  <style>
+    body { background:#f0f4ff; font-family:'Inter',sans-serif; }
+
+    .rx-header {
+      background: var(--grad-primary);
+      padding: 16px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 2px 12px rgba(99,102,241,0.3);
+    }
+    .rx-logo { display:flex;align-items:center;gap:12px; }
+    .rx-logo-icon { width:40px;height:40px;background:rgba(255,255,255,0.2);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:22px; }
+    .rx-logo-text { font-family:'Plus Jakarta Sans',sans-serif;font-weight:800;color:white;font-size:18px; }
+    .rx-logo-sub { font-size:11px;color:rgba(255,255,255,0.75);margin-top:1px; }
+
+    .rx-header-right { display:flex;align-items:center;gap:10px; }
+    .lang-btn { background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.3);color:white;padding:5px 12px;border-radius:20px;font-size:12px;font-weight:700;cursor:pointer;transition:all 0.2s; }
+    .lang-btn.active { background:rgba(255,255,255,0.9);color:var(--primary); }
+    .lang-btn:hover { background:rgba(255,255,255,0.25); }
+
+    .rx-time { color:white;font-weight:700;font-size:14px;background:rgba(255,255,255,0.15);padding:6px 14px;border-radius:20px; }
+
+    .rx-main { max-width:1100px;margin:0 auto;padding:24px 20px; }
+
+    /* STAT CARDS */
+    .rx-stats { display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:24px; }
+    .rx-stat { background:white;border-radius:20px;padding:18px 20px;box-shadow:0 2px 8px rgba(0,0,0,0.06);border:1px solid rgba(0,0,0,0.04);transition:transform 0.2s; }
+    .rx-stat:hover { transform:translateY(-2px); }
+    .rx-stat .icon { font-size:28px;margin-bottom:8px; }
+    .rx-stat .value { font-size:26px;font-weight:800;color:var(--text-primary);line-height:1; }
+    .rx-stat .label { font-size:12px;color:var(--text-muted);margin-top:4px;font-weight:500; }
+    .rx-stat .change { font-size:11px;margin-top:6px;font-weight:700; }
+    .rx-stat.danger .value { color:var(--error); }
+    .rx-stat.success-card .value { color:var(--success); }
+
+    /* MAIN GRID */
+    .rx-grid { display:grid;grid-template-columns:2fr 1fr;gap:18px; }
+
+    /* SCHEDULE TABLE */
+    .rx-card { background:white;border-radius:20px;box-shadow:0 2px 8px rgba(0,0,0,0.06);border:1px solid rgba(0,0,0,0.04);overflow:hidden; }
+    .rx-card-header { padding:16px 20px;border-bottom:1px solid #f1f5f9;display:flex;align-items:center;justify-content:space-between; }
+    .rx-card-title { font-weight:800;font-size:16px;color:var(--text-primary); }
+    .rx-card-body { padding:0; }
+
+    .appt-row { display:flex;align-items:center;gap:14px;padding:14px 20px;border-bottom:1px solid #f8fafc;transition:background 0.15s;cursor:pointer; }
+    .appt-row:hover { background:#f8faff; }
+    .appt-row:last-child { border-bottom:none; }
+
+    .appt-num { width:36px;height:36px;background:var(--primary-50);border-radius:12px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px;color:var(--primary);flex-shrink:0; }
+    .appt-time-box { text-align:center;min-width:52px;flex-shrink:0; }
+    .appt-time-box .t { font-weight:800;font-size:15px;color:var(--text-primary); }
+    .appt-time-box .p { font-size:10px;color:var(--text-muted);text-transform:uppercase; }
+    .appt-divider { width:1px;height:36px;background:#e2e8f0;flex-shrink:0; }
+
+    .appt-info { flex:1; }
+    .appt-name { font-weight:700;font-size:14px; }
+    .appt-meta { font-size:12px;color:var(--text-muted);margin-top:2px; }
+
+    .appt-actions { display:flex;gap:6px;flex-shrink:0; }
+    .act-btn { padding:6px 12px;border-radius:10px;font-size:12px;font-weight:700;cursor:pointer;border:none;transition:all 0.15s; }
+    .act-btn.green { background:#ecfdf5;color:#059669; }
+    .act-btn.green:hover { background:#059669;color:white; }
+    .act-btn.red { background:#fef2f2;color:#dc2626; }
+    .act-btn.red:hover { background:#dc2626;color:white; }
+    .act-btn.blue { background:#eff6ff;color:#2563eb; }
+    .act-btn.blue:hover { background:#2563eb;color:white; }
+    .act-btn.orange { background:#fffbeb;color:#d97706; }
+    .act-btn.orange:hover { background:#d97706;color:white; }
+    .act-btn.tg { background:#e3f2fd;color:#0088cc; }
+    .act-btn.tg:hover { background:#0088cc;color:white; }
+
+    .status-pill { padding:4px 10px;border-radius:20px;font-size:11px;font-weight:700;white-space:nowrap; }
+    .sp-waiting { background:#fef9c3;color:#854d0e; }
+    .sp-here { background:#ecfdf5;color:#059669; }
+    .sp-missed { background:#fef2f2;color:#dc2626; }
+    .sp-done { background:#eff6ff;color:#2563eb; }
+    .sp-confirmed { background:#f0fdf4;color:#16a34a; }
+
+    /* QUICK BOOK */
+    .quick-book { background:white;border-radius:20px;padding:20px;box-shadow:0 2px 8px rgba(0,0,0,0.06); }
+    .qb-title { font-weight:800;font-size:15px;margin-bottom:16px;display:flex;align-items:center;gap:8px; }
+    .qb-form { display:flex;flex-direction:column;gap:12px; }
+    .qb-input { width:100%;padding:10px 14px;border:1.5px solid #e2e8f0;border-radius:12px;font-size:13px;font-family:inherit;outline:none;transition:border 0.2s;background:#fafafa; }
+    .qb-input:focus { border-color:var(--primary);background:white;box-shadow:0 0 0 3px rgba(99,102,241,0.1); }
+    .qb-btn { background:var(--grad-primary);color:white;padding:12px;border-radius:14px;font-size:14px;font-weight:700;border:none;cursor:pointer;transition:all 0.2s;box-shadow:0 4px 12px rgba(99,102,241,0.3); }
+    .qb-btn:hover { transform:translateY(-1px);box-shadow:0 6px 18px rgba(99,102,241,0.4); }
+
+    /* INCOME PANEL */
+    .income-panel { background:white;border-radius:20px;padding:20px;box-shadow:0 2px 8px rgba(0,0,0,0.06);margin-top:16px; }
+    .ip-title { font-weight:800;font-size:15px;margin-bottom:14px; }
+    .income-row { display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid #f1f5f9; }
+    .income-row:last-child { border-bottom:none; }
+    .income-label { font-size:13px;color:var(--text-muted); }
+    .income-value { font-weight:800;font-size:14px;color:var(--text-primary); }
+    .income-value.green { color:var(--success); }
+
+    /* TELEGRAM PANEL */
+    .tg-panel { background:white;border-radius:20px;padding:20px;box-shadow:0 2px 8px rgba(0,0,0,0.06);margin-top:16px; }
+    .tg-header { display:flex;align-items:center;gap:10px;margin-bottom:14px; }
+    .tg-icon { width:38px;height:38px;background:#0088cc;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0; }
+    .tg-status { display:flex;align-items:center;gap:6px;font-size:12px;font-weight:600;color:var(--success);margin-top:2px; }
+    .tg-status::before { content:'';width:7px;height:7px;border-radius:50%;background:var(--success);animation:pulse-ring 2s infinite; }
+    .tg-action { padding:10px 14px;background:#f0f9ff;border-radius:12px;display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;cursor:pointer;transition:background 0.15s; }
+    .tg-action:hover { background:#e0f2fe; }
+    .tg-action-label { font-size:13px;font-weight:600; }
+    .tg-action-count { font-size:12px;color:#0088cc;font-weight:700;background:#e0f2fe;padding:2px 10px;border-radius:20px; }
+
+    /* MISSED ALERT */
+    .missed-alert { background:linear-gradient(135deg,#fef2f2,#fff1f2);border:1.5px solid #fca5a5;border-radius:16px;padding:14px 16px;margin-bottom:14px; }
+    .ma-title { font-weight:800;color:#dc2626;font-size:13px;margin-bottom:8px;display:flex;align-items:center;gap:6px; }
+    .ma-item { display:flex;align-items:center;justify-content:space-between;font-size:12px;padding:6px 0;border-bottom:1px solid rgba(220,38,38,0.1); }
+    .ma-item:last-child { border-bottom:none; }
+    .ma-name { font-weight:600; }
+    .ma-time { color:#ef4444; }
+
+    /* RETURN REMINDER */
+    .return-section { background:white;border-radius:20px;padding:20px;box-shadow:0 2px 8px rgba(0,0,0,0.06);margin-top:16px; }
+    .return-item { display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid #f1f5f9; }
+    .return-item:last-child { border-bottom:none; }
+    .return-avatar { width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;color:white;flex-shrink:0; }
+    .return-info { flex:1; }
+    .return-name { font-size:13px;font-weight:700; }
+    .return-date { font-size:11px;color:var(--text-muted);margin-top:1px; }
+
+    /* BOTTOM NAV (Mobile) */
+    .rx-bottom-nav { display:none;position:fixed;bottom:0;left:0;right:0;background:white;border-top:1px solid #e2e8f0;padding:8px 0 env(safe-area-inset-bottom,8px);z-index:200; }
+    .rx-bottom-nav-items { display:flex;justify-content:space-around; }
+    .bn-item { display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:4px 12px;border-radius:12px;transition:background 0.15s; }
+    .bn-item.active { color:var(--primary); }
+    .bn-item .bn-icon { font-size:22px; }
+    .bn-item .bn-label { font-size:10px;font-weight:600;color:var(--text-muted); }
+    .bn-item.active .bn-label { color:var(--primary); }
+
+    @media(max-width:900px) {
+      .rx-stats { grid-template-columns:repeat(2,1fr); }
+      .rx-grid { grid-template-columns:1fr; }
+      .rx-bottom-nav { display:block; }
+      .rx-main { padding-bottom:80px; }
+    }
+    @media(max-width:480px) {
+      .rx-stats { grid-template-columns:1fr 1fr; }
+      .appt-actions { flex-wrap:wrap; }
+    }
+
+    @keyframes pulse-ring { 0%,100%{opacity:1;} 50%{opacity:0.5;} }
+    .fade-in { animation:fadeIn 0.4s ease; }
+    @keyframes fadeIn { from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);} }
+  </style>
+</head>
+<body>
+<div id="toastContainer" class="toast-container"></div>
+
+<!-- HEADER -->
+<div class="rx-header">
+  <div class="rx-logo">
+    <div class="rx-logo-icon">🏥</div>
+    <div>
+      <div class="rx-logo-text">MediCare Pro</div>
+      <div class="rx-logo-sub" id="hdr-sub">Qabulxona paneli</div>
+    </div>
+  </div>
+  <div class="rx-header-right">
+    <div class="rx-time" id="liveTime">17:35</div>
+    <!-- Language toggle -->
+    <div style="display:flex;gap:4px;background:rgba(255,255,255,0.1);border-radius:20px;padding:3px;">
+      <button class="lang-btn active" id="btn-uz" onclick="setLang('uz')">UZ</button>
+      <button class="lang-btn" id="btn-ru" onclick="setLang('ru')">RU</button>
+      <button class="lang-btn" id="btn-en" onclick="setLang('en')">EN</button>
+    </div>
+    <!-- Currency toggle -->
+    <button class="lang-btn" id="currBtn" onclick="toggleCurrency()" style="font-size:11px;">UZS ⇄ USD</button>
+    <a href="admin.html" class="lang-btn" style="text-decoration:none;">Admin →</a>
+  </div>
+</div>
+
+<div class="rx-main">
+
+  <!-- DATE BAR -->
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;">
+    <div>
+      <div style="font-size:22px;font-weight:800;color:var(--text-primary);" id="todayDate">Bugun — 26-Fevral, 2026</div>
+      <div style="font-size:13px;color:var(--text-muted);">Chorshanba · City Medical Center</div>
+    </div>
+    <div style="display:flex;gap:10px;">
+      <button class="act-btn blue" onclick="openQuickBook()">📅 Tezkor yozish</button>
+      <button class="act-btn tg" onclick="sendAllReminders()">✈️ Barcha eslatmalarni yuborish</button>
+      <a href="admin.html" class="act-btn blue" style="text-decoration:none;">⚙️ Admin panel</a>
+    </div>
+  </div>
+
+  <!-- MISSED ALERT (shown when there are missed patients) -->
+  <div class="missed-alert" id="missedAlert">
+    <div class="ma-title">🚨 Kelmagan bemorlar — Zudlik bilan bog'laning!</div>
+    <div id="missedList"></div>
+  </div>
+
+  <!-- STAT CARDS -->
+  <div class="rx-stats">
+    <div class="rx-stat">
+      <div class="icon">📅</div>
+      <div class="value" id="st-total">24</div>
+      <div class="label" id="lbl-total">Bugungi qabullar</div>
+      <div class="change" style="color:var(--primary);">✓ Jadval yuklandi</div>
+    </div>
+    <div class="rx-stat success-card">
+      <div class="icon">✅</div>
+      <div class="value" id="st-here">11</div>
+      <div class="label" id="lbl-here">Kelgan bemorlar</div>
+      <div class="change" style="color:var(--success);">↑ Yaxshi ko'rsatkich</div>
+    </div>
+    <div class="rx-stat danger">
+      <div class="icon">❌</div>
+      <div class="value" id="st-missed">3</div>
+      <div class="label" id="lbl-missed">Kelmagan bemorlar</div>
+      <div class="change" style="color:var(--error);">⚠ Qo'ng'iroq kerak</div>
+    </div>
+    <div class="rx-stat success-card">
+      <div class="icon">💰</div>
+      <div class="value" id="st-income">1,408,000</div>
+      <div class="label" id="lbl-income">Bugungi daromad (UZS)</div>
+      <div class="change" style="color:var(--success);">↑ 14% kechagidan</div>
+    </div>
+  </div>
+
+  <div class="rx-grid">
+    <!-- LEFT: SCHEDULE -->
+    <div>
+      <div class="rx-card fade-in">
+        <div class="rx-card-header">
+          <div class="rx-card-title" id="sched-title">📋 Bugungi jadval</div>
+          <div style="display:flex;gap:8px;">
+            <button class="act-btn blue" onclick="filterSchedule('all')" id="f-all">Barchasi</button>
+            <button class="act-btn green" onclick="filterSchedule('waiting')" id="f-waiting">Kutmoqda</button>
+            <button class="act-btn red" onclick="filterSchedule('missed')" id="f-missed">Kelmagan</button>
+          </div>
+        </div>
+        <div class="rx-card-body" id="scheduleList"></div>
+      </div>
+    </div>
+
+    <!-- RIGHT PANEL -->
+    <div>
+      <!-- QUICK BOOK -->
+      <div class="quick-book fade-in" id="quickBookPanel" style="display:none;">
+        <div class="qb-title">📅 <span id="qb-title-text">Tezkor yozilish</span></div>
+        <div class="qb-form">
+          <input class="qb-input" placeholder="Bemor F.I.O" id="qb-name">
+          <input class="qb-input" placeholder="Telefon +998 ..." id="qb-phone" type="tel">
+          <select class="qb-input" id="qb-doctor">
+            <option value="">Shifokorni tanlang...</option>
+            <option>Dr. Aliyev (Kardiologiya)</option>
+            <option>Dr. Karimova (Nevrologiya)</option>
+            <option>Dr. Yusupov (Ortopediya)</option>
+            <option>Dr. Nazarova (Oftalmologiya)</option>
+          </select>
+          <select class="qb-input" id="qb-time">
+            <option>9:00</option><option>9:30</option><option>10:00</option>
+            <option>10:30</option><option>11:00</option><option>11:30</option>
+            <option>14:00</option><option>14:30</option><option>15:00</option>
+            <option>15:30</option><option>16:00</option>
+          </select>
+          <button class="qb-btn" onclick="quickBook()">✅ Yozilishni tasdiqlash</button>
+          <button class="act-btn" style="background:#f1f5f9;color:var(--text-secondary);" onclick="closeQuickBook()">Bekor qilish</button>
+        </div>
+      </div>
+
+      <!-- TELEGRAM -->
+      <div class="tg-panel fade-in">
+        <div class="tg-header">
+          <div class="tg-icon">✈️</div>
+          <div>
+            <div style="font-weight:800;font-size:15px;">Telegram Bot</div>
+            <div class="tg-status">Faol · @MediCareProBot</div>
+          </div>
+        </div>
+        <div class="tg-action" onclick="sendReminders('24h')">
+          <div class="tg-action-label">⏰ Ertangi qabul eslatmasi</div>
+          <span class="tg-action-count" id="tg-tomorrow-count">8 ta</span>
+        </div>
+        <div class="tg-action" onclick="sendReminders('2h')">
+          <div class="tg-action-label">🔔 2 soatlik eslatma</div>
+          <span class="tg-action-count" id="tg-2h-count">3 ta</span>
+        </div>
+        <div class="tg-action" onclick="sendReminders('missed')">
+          <div class="tg-action-label">🚨 Kelmagan eslatma</div>
+          <span class="tg-action-count" id="tg-missed-count" style="background:#fee2e2;color:#dc2626;">3 ta</span>
+        </div>
+        <div class="tg-action" onclick="sendReminders('return')">
+          <div class="tg-action-label">🔄 Qaytish eslatmasi</div>
+          <span class="tg-action-count" id="tg-return-count">12 ta</span>
+        </div>
+        <div style="margin-top:12px;padding:10px;background:#f0fdf4;border-radius:12px;text-align:center;font-size:12px;color:var(--success);font-weight:600;" id="tg-sent-today">
+          📊 Bugun yuborildi: <strong>47</strong> eslatma · <strong>89%</strong> o'qildi
+        </div>
+      </div>
+
+      <!-- TODAY'S INCOME -->
+      <div class="income-panel fade-in">
+        <div class="ip-title">💰 <span id="inc-title">Bugungi daromad</span></div>
+        <div class="income-row"><span class="income-label">Naqd pul</span><span class="income-value green" id="inc-cash">640,000 so'm</span></div>
+        <div class="income-row"><span class="income-label">Karta</span><span class="income-value green" id="inc-card">480,000 so'm</span></div>
+        <div class="income-row"><span class="income-label">Sug'urta</span><span class="income-value green" id="inc-ins">288,000 so'm</span></div>
+        <div class="income-row" style="border-top:2px solid #e2e8f0;margin-top:4px;padding-top:12px;">
+          <span style="font-weight:800;font-size:14px;" id="lbl-total-inc">JAMI</span>
+          <span style="font-weight:900;font-size:16px;color:var(--primary);" id="inc-total">1,408,000 so'm</span>
+        </div>
+        <div style="margin-top:12px;">
+          <div style="display:flex;justify-content:space-between;margin-bottom:6px;">
+            <span style="font-size:12px;color:var(--text-muted);" id="lbl-plan">Kun rejasi</span>
+            <span style="font-size:12px;font-weight:700;" id="inc-progress-text">1,408,000 / 2,000,000</span>
+          </div>
+          <div class="progress-bar"><div class="progress-fill" style="width:70%;"></div></div>
+        </div>
+      </div>
+
+      <!-- RETURN REMINDERS -->
+      <div class="return-section fade-in">
+        <div style="font-weight:800;font-size:15px;margin-bottom:12px;">🔄 <span id="ret-title">Qaytish eslatmalari</span></div>
+        <div style="font-size:12px;color:var(--text-muted);margin-bottom:10px;" id="ret-sub">Bugun qaytib kelishi kerak bo'lgan bemorlar</div>
+        <div id="returnList"></div>
+        <button class="qb-btn" style="margin-top:12px;" onclick="sendAllReturnReminders()">📲 Barchaga eslatma yuborish</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MOBILE BOTTOM NAV -->
+<div class="rx-bottom-nav">
+  <div class="rx-bottom-nav-items">
+    <div class="bn-item active" onclick="scrollTo(0,0)"><div class="bn-icon">📋</div><div class="bn-label">Jadval</div></div>
+    <div class="bn-item" onclick="openQuickBook()"><div class="bn-icon">➕</div><div class="bn-label">Yozish</div></div>
+    <div class="bn-item" onclick="sendAllReminders()"><div class="bn-icon">✈️</div><div class="bn-label">Telegram</div></div>
+    <div class="bn-item" onclick="window.location.href='admin.html'"><div class="bn-icon">⚙️</div><div class="bn-label">Admin</div></div>
+  </div>
+</div>
+
+<script>
+// ===== DATA =====
+const LANG_DATA = {
+  uz: { title:'Qabulxona paneli', sched:'📋 Bugungi jadval', quickBook:'Tezkor yozilish', confirm:'Tasdiqlang', cancel:'Bekor qilish',
+        checkin:'Keldi ✓', absent:'Kelmadi ✗', call:'📞 Qo\'ng\'iroq', reschedule:'Qayta yoz', remind:'Telegram',
+        today:'Bugun', income:'Bugungi daromad', total:'JAMI', plan:'Kun rejasi', ret:'Qaytish eslatmalari',
+        retSub:'Bugun qaytib kelishi kerak bo\'lgan bemorlar', days:['Yak','Du','Se','Ch','Pa','Ju','Sha'],
+        months:['Yanvar','Fevral','Mart','Aprel','May','Iyun','Iyul','Avgust','Sentyabr','Oktyabr','Noyabr','Dekabr'],
+        statTotal:'Bugungi qabullar', statHere:'Kelgan bemorlar', statMissed:'Kelmagan bemorlar', statInc:'Bugungi daromad',
+        missedTitle:'🚨 Kelmagan bemorlar — Zudlik bilan bog\'laning!',
+        tgSent:'Bugun yuborildi', tgRead:'o\'qildi',
+        all:'Barchasi', waiting:'Kutmoqda', missed:'Kelmagan',
+        send24:'⏰ Ertangi qabul eslatmasi', send2h:'🔔 2 soatlik eslatma',
+        sendMissed:'🚨 Kelmagan eslatma', sendReturn:'🔄 Qaytish eslatmasi',
+        toastCheckin:'✅ Bemor keldi deb belgilandi', toastAbsent:'❌ Kelmagan deb belgilandi — Telegram eslatma yuborildi',
+        toastSent:'✈️ Telegram eslatma yuborildi!', toastBooked:'📅 Qabul band qilindi!',
+        toastAllSent:'✈️ Barcha eslatmalar yuborildi!', toastReturnSent:'🔄 Qaytish eslatmalari yuborildi!'
+  },
+  ru: { title:'Панель ресепшн', sched:'📋 Расписание на сегодня', quickBook:'Быстрая запись', confirm:'Подтвердить', cancel:'Отмена',
+        checkin:'Пришёл ✓', absent:'Не пришёл ✗', call:'📞 Позвонить', reschedule:'Перенести', remind:'Telegram',
+        today:'Сегодня', income:'Доход за день', total:'ИТОГО', plan:'План дня', ret:'Напоминания о возврате',
+        retSub:'Пациенты, которые должны вернуться сегодня', days:['Вс','Пн','Вт','Ср','Чт','Пт','Сб'],
+        months:['Янв','Фев','Мар','Апр','Май','Июн','Июл','Авг','Сен','Окт','Ноя','Дек'],
+        statTotal:'Записей на сегодня', statHere:'Пришли пациентов', statMissed:'Не пришли', statInc:'Доход сегодня',
+        missedTitle:'🚨 Не пришли — Срочно позвоните!',
+        tgSent:'Отправлено сегодня', tgRead:'прочитано',
+        all:'Все', waiting:'Ожидают', missed:'Не пришли',
+        send24:'⏰ Напоминание на завтра', send2h:'🔔 Напоминание за 2 часа',
+        sendMissed:'🚨 Пропущенные', sendReturn:'🔄 Напоминание о возврате',
+        toastCheckin:'✅ Пациент отмечен', toastAbsent:'❌ Отмечен как не пришедший',
+        toastSent:'✈️ Telegram напоминание отправлено!', toastBooked:'📅 Запись создана!',
+        toastAllSent:'✈️ Все напоминания отправлены!', toastReturnSent:'🔄 Напоминания о возврате отправлены!'
+  },
+  en: { title:'Reception Panel', sched:'📋 Today\'s Schedule', quickBook:'Quick Book', confirm:'Confirm', cancel:'Cancel',
+        checkin:'Arrived ✓', absent:'No-show ✗', call:'📞 Call', reschedule:'Reschedule', remind:'Telegram',
+        today:'Today', income:"Today's Income", total:'TOTAL', plan:'Daily Target', ret:'Return Reminders',
+        retSub:'Patients due for follow-up today', days:['Su','Mo','Tu','We','Th','Fr','Sa'],
+        months:['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'],
+        statTotal:'Today\'s Appointments', statHere:'Arrived', statMissed:'No-shows', statInc:"Today's Revenue",
+        missedTitle:'🚨 Missed Appointments — Call Immediately!',
+        tgSent:'Sent today', tgRead:'read',
+        all:'All', waiting:'Waiting', missed:'Missed',
+        send24:'⏰ Tomorrow reminder', send2h:'🔔 2-hour reminder',
+        sendMissed:'🚨 Missed reminder', sendReturn:'🔄 Return reminder',
+        toastCheckin:'✅ Patient marked as arrived', toastAbsent:'❌ Marked as no-show — reminder sent',
+        toastSent:'✈️ Telegram reminder sent!', toastBooked:'📅 Appointment booked!',
+        toastAllSent:'✈️ All reminders sent!', toastReturnSent:'🔄 Return reminders sent!'
+  }
+};
+
+let currentLang = localStorage.getItem('mc_lang') || 'uz';
+let currencyMode = localStorage.getItem('mc_currency') || 'uzs';
+const UZS_RATE = 12800;
+
+const incomeUSD = {cash:50, card:37.5, insurance:22.5, total:110};
+
+const APPOINTMENTS = [
+  {id:1, name:'Omar Saidov', phone:'+998 90 123 4567', doctor:'Dr. Aliyev', service:'Kardiologiya', time:'9:00', status:'done', initials:'OS', color:'#6366f1'},
+  {id:2, name:'Nilufar Rashidova', phone:'+998 91 234 5678', doctor:'Dr. Karimova', service:'Nevrologiya', time:'9:30', status:'done', initials:'NR', color:'#10b981'},
+  {id:3, name:'Bobur Toshmatov', phone:'+998 93 345 6789', doctor:'Dr. Yusupov', service:'Ortopediya', time:'10:00', status:'waiting', initials:'BT', color:'#f59e0b'},
+  {id:4, name:'Zulfiya Mirzayeva', phone:'+998 94 456 7890', doctor:'Dr. Nazarova', service:'Oftalmologiya', time:'10:30', status:'waiting', initials:'ZM', color:'#06b6d4'},
+  {id:5, name:'Jasur Raimov', phone:'+998 95 567 8901', doctor:'Dr. Aliyev', service:'Kardiologiya', time:'11:00', status:'missed', initials:'JR', color:'#ef4444'},
+  {id:6, name:'Malika Ergasheva', phone:'+998 97 678 9012', doctor:'Dr. Karimova', service:'Nevrologiya', time:'11:30', status:'missed', initials:'ME', color:'#ef4444'},
+  {id:7, name:'Timur Khasanov', phone:'+998 99 789 0123', doctor:'Dr. Yusupov', service:'Ortopediya', time:'14:00', status:'missed', initials:'TK', color:'#ef4444'},
+  {id:8, name:'Dildora Nazarova', phone:'+998 90 890 1234', doctor:'Dr. Nazarova', service:'Oftalmologiya', time:'14:30', status:'waiting', initials:'DN', color:'#8b5cf6'},
+  {id:9, name:'Sherzod Yusupov', phone:'+998 91 901 2345', doctor:'Dr. Aliyev', service:'Kardiologiya', time:'15:00', status:'waiting', initials:'SH', color:'#06b6d4'},
+  {id:10, name:'Gulnora Tosheva', phone:'+998 93 012 3456', doctor:'Dr. Karimova', service:'Nevrologiya', time:'15:30', status:'waiting', initials:'GT', color:'#10b981'},
+];
+
+const RETURN_PATIENTS = [
+  {name:'Omar Saidov', date:'26-Feb', reason:'Kardiologiya nazorati', color:'#6366f1', initials:'OS'},
+  {name:'Feruza Hasanova', date:'26-Feb', reason:'Qon testi natijalari', color:'#10b981', initials:'FH'},
+  {name:'Bahodir Umarov', date:'26-Feb', reason:'Davolash natijalari', color:'#f59e0b', initials:'BU'},
+];
+
+// ===== LANGUAGE =====
+function setLang(lang) {
+  currentLang = lang;
+  localStorage.setItem('mc_lang', lang);
+  document.querySelectorAll('.lang-btn[id^="btn-"]').forEach(b => b.classList.remove('active'));
+  document.getElementById('btn-' + lang)?.classList.add('active');
+  applyLanguage();
+  renderSchedule();
+  renderReturnList();
+  updateMissedAlert();
+}
+
+function T(key) { return LANG_DATA[currentLang]?.[key] || LANG_DATA.uz[key] || key; }
+
+function applyLanguage() {
+  const L = LANG_DATA[currentLang];
+  if (!L) return;
+  document.getElementById('hdr-sub').textContent = L.title;
+  document.getElementById('sched-title').textContent = L.sched;
+  document.getElementById('lbl-total').textContent = L.statTotal;
+  document.getElementById('lbl-here').textContent = L.statHere;
+  document.getElementById('lbl-missed').textContent = L.statMissed;
+  document.getElementById('lbl-income').textContent = L.statInc + ' (' + (currencyMode === 'uzs' ? 'UZS' : 'USD') + ')';
+  document.getElementById('inc-title').textContent = L.income;
+  document.getElementById('lbl-total-inc').textContent = L.total;
+  document.getElementById('lbl-plan').textContent = L.plan;
+  document.getElementById('ret-title').textContent = L.ret;
+  document.getElementById('ret-sub').textContent = L.retSub;
+  document.getElementById('f-all').textContent = L.all;
+  document.getElementById('f-waiting').textContent = L.waiting;
+  document.getElementById('f-missed').textContent = L.missed;
+  document.getElementById('qb-title-text').textContent = L.quickBook;
+  updateTodayDate();
+  updateIncomePanel();
+}
+
+// ===== CURRENCY =====
+function toggleCurrency() {
+  currencyMode = currencyMode === 'uzs' ? 'usd' : 'uzs';
+  localStorage.setItem('mc_currency', currencyMode);
+  document.getElementById('currBtn').textContent = currencyMode === 'uzs' ? 'USD ⇄ UZS' : 'UZS ⇄ USD';
+  updateIncomePanel();
+}
+
+function fmtMoney(usd) {
+  if (currencyMode === 'uzs') {
+    return (usd * UZS_RATE).toLocaleString('uz-UZ') + " so'm";
+  }
+  return '$' + usd.toLocaleString('en-US', {minimumFractionDigits:0});
+}
+
+function updateIncomePanel() {
+  document.getElementById('inc-cash').textContent = fmtMoney(incomeUSD.cash);
+  document.getElementById('inc-card').textContent = fmtMoney(incomeUSD.card);
+  document.getElementById('inc-ins').textContent = fmtMoney(incomeUSD.insurance);
+  document.getElementById('inc-total').textContent = fmtMoney(incomeUSD.total);
+  const totalDisp = currencyMode === 'uzs' ? (incomeUSD.total * UZS_RATE).toLocaleString('uz-UZ') : incomeUSD.total.toString();
+  const planDisp = currencyMode === 'uzs' ? '2,000,000' : '156';
+  document.getElementById('inc-progress-text').textContent = (currencyMode==='uzs' ? totalDisp+" / "+planDisp : '$'+totalDisp+' / $'+planDisp);
+  document.getElementById('st-income').textContent = currencyMode === 'uzs' ? (incomeUSD.total*UZS_RATE).toLocaleString('uz-UZ') : '$'+incomeUSD.total;
+}
+
+// ===== DATE/TIME =====
+function updateTodayDate() {
+  const now = new Date(2026, 1, 26, 17, 35);
+  const L = LANG_DATA[currentLang];
+  const day = L.days[now.getDay()];
+  const month = L.months[now.getMonth()];
+  document.getElementById('todayDate').textContent = `${T('today')} — ${now.getDate()}-${month}, ${now.getFullYear()}`;
+}
+
+function updateClock() {
+  const now = new Date();
+  const h = String(now.getHours()).padStart(2,'0');
+  const m = String(now.getMinutes()).padStart(2,'0');
+  document.getElementById('liveTime').textContent = h + ':' + m;
+}
+
+// ===== SCHEDULE =====
+let currentFilter = 'all';
+
+function filterSchedule(f) {
+  currentFilter = f;
+  document.querySelectorAll('[id^="f-"]').forEach(b => b.style.fontWeight = '600');
+  document.getElementById('f-'+f).style.fontWeight = '900';
+  renderSchedule();
+}
+
+function renderSchedule() {
+  const list = document.getElementById('scheduleList');
+  const filtered = currentFilter === 'all' ? APPOINTMENTS : APPOINTMENTS.filter(a => a.status === currentFilter);
+  if (!filtered.length) {
+    list.innerHTML = '<div style="padding:40px;text-align:center;color:var(--text-muted);font-size:14px;">Hech narsa topilmadi</div>';
+    return;
+  }
+  const statusLabels = {
+    waiting: `<span class="status-pill sp-waiting">${T('waiting')}</span>`,
+    done: `<span class="status-pill sp-done">✓ Bajarildi</span>`,
+    missed: `<span class="status-pill sp-missed">✗ ${T('absent')}</span>`,
+    here: `<span class="status-pill sp-here">● Keldi</span>`,
+  };
+  list.innerHTML = filtered.map((a, i) => `
+    <div class="appt-row" id="row-${a.id}">
+      <div class="appt-num">${i+1}</div>
+      <div class="appt-time-box">
+        <div class="t">${a.time}</div>
+        <div class="p">${+a.time.split(':')[0] < 12 ? 'AM' : 'PM'}</div>
+      </div>
+      <div class="appt-divider"></div>
+      <div style="width:36px;height:36px;border-radius:50%;background:${a.color};display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;color:white;flex-shrink:0;">${a.initials}</div>
+      <div class="appt-info">
+        <div class="appt-name">${a.name}</div>
+        <div class="appt-meta">👨‍⚕️ ${a.doctor} · ${a.service} · 📞 ${a.phone}</div>
+      </div>
+      ${statusLabels[a.status] || ''}
+      <div class="appt-actions">
+        ${a.status === 'waiting' ? `
+          <button class="act-btn green" onclick="markArrived(${a.id})">${T('checkin')}</button>
+          <button class="act-btn red" onclick="markMissed(${a.id})">${T('absent')}</button>` : ''}
+        ${a.status === 'missed' ? `
+          <button class="act-btn tg" onclick="sendTelegramReminder('${a.name}','${a.phone}')">${T('remind')}</button>
+          <button class="act-btn orange" onclick="rescheduleAppt(${a.id})">${T('reschedule')}</button>` : ''}
+        <button class="act-btn blue" onclick="callPatient('${a.phone}')">${T('call')}</button>
+      </div>
+    </div>`).join('');
+}
+
+function markArrived(id) {
+  const appt = APPOINTMENTS.find(a => a.id === id);
+  if (appt) { appt.status = 'here'; updateStats(); renderSchedule(); updateMissedAlert(); showToast('success', T('toastCheckin'), appt.name); }
+}
+
+function markMissed(id) {
+  const appt = APPOINTMENTS.find(a => a.id === id);
+  if (appt) {
+    appt.status = 'missed';
+    updateStats(); renderSchedule(); updateMissedAlert();
+    showToast('warning', T('toastAbsent'), appt.name);
+    setTimeout(() => showToast('info', '✈️ Telegram', `${appt.name} ga eslatma yuborildi`), 800);
+  }
+}
+
+function rescheduleAppt(id) {
+  showToast('info', T('reschedule'), 'Qayta yozish oynasi ochilmoqda...');
+  setTimeout(() => openQuickBook(), 500);
+}
+
+function callPatient(phone) {
+  showToast('info', '📞 ' + T('call'), phone);
+}
+
+function updateStats() {
+  const here = APPOINTMENTS.filter(a => a.status === 'here' || a.status === 'done').length;
+  const missed = APPOINTMENTS.filter(a => a.status === 'missed').length;
+  document.getElementById('st-here').textContent = here;
+  document.getElementById('st-missed').textContent = missed;
+}
+
+function updateMissedAlert() {
+  const missed = APPOINTMENTS.filter(a => a.status === 'missed');
+  const alert = document.getElementById('missedAlert');
+  const list = document.getElementById('missedList');
+  if (!missed.length) { alert.style.display = 'none'; return; }
+  alert.style.display = 'block';
+  document.getElementById('missedAlert').querySelector('.ma-title').textContent = T('missedTitle');
+  list.innerHTML = missed.map(m => `
+    <div class="ma-item">
+      <span class="ma-name">${m.name} · ${m.service}</span>
+      <span class="ma-time">${m.time} · ${m.doctor}</span>
+      <button class="act-btn tg" style="padding:4px 10px;font-size:11px;" onclick="sendTelegramReminder('${m.name}','${m.phone}')">Telegram</button>
+    </div>`).join('');
+}
+
+// ===== TELEGRAM =====
+function sendTelegramReminder(name, phone) {
+  showToast('success', '✈️ Telegram yuborildi!', `${name} (${phone}) ga xabar ketdi`);
+}
+
+function sendReminders(type) {
+  const msgs = {
+    '24h': "Ertangi qabul eslatmalari yuborildi!",
+    '2h': "2 soatlik eslatmalar yuborildi!",
+    'missed': "Kelmagan bemorlarга eslatma yuborildi!",
+    'return': "Qaytish eslatmalari yuborildi!"
+  };
+  showToast('success', '✈️ Telegram', msgs[type] || 'Yuborildi!');
+}
+
+function sendAllReminders() {
+  showToast('success', T('toastAllSent'), `${APPOINTMENTS.filter(a=>a.status==='waiting').length} ta bemor uchun`);
+}
+
+function sendAllReturnReminders() {
+  showToast('success', T('toastReturnSent'), `${RETURN_PATIENTS.length} ta bemor uchun`);
+}
+
+// ===== QUICK BOOK =====
+function openQuickBook() {
+  document.getElementById('quickBookPanel').style.display = 'block';
+  document.getElementById('quickBookPanel').scrollIntoView({behavior:'smooth'});
+}
+function closeQuickBook() {
+  document.getElementById('quickBookPanel').style.display = 'none';
+}
+function quickBook() {
+  const name = document.getElementById('qb-name').value.trim();
+  const phone = document.getElementById('qb-phone').value.trim();
+  const doctor = document.getElementById('qb-doctor').value;
+  const time = document.getElementById('qb-time').value;
+  if (!name || !phone || !doctor) { showToast('error', 'Xatolik', 'Barcha maydonlarni to\'ldiring'); return; }
+  const newAppt = { id: Date.now(), name, phone, doctor, service: doctor.split('(')[1]?.replace(')','') || 'Umumiy',
+    time, status: 'waiting', initials: name.split(' ').map(n=>n[0]).join('').slice(0,2).toUpperCase(), color: '#6366f1' };
+  APPOINTMENTS.push(newAppt);
+  document.getElementById('qb-name').value = '';
+  document.getElementById('qb-phone').value = '';
+  closeQuickBook();
+  updateStats();
+  renderSchedule();
+  showToast('success', T('toastBooked'), `${name} · ${time} · ${doctor}`);
+  setTimeout(() => showToast('info', '✈️ Telegram', `Tasdiqlash xabari ${name} ga yuborildi`), 1000);
+}
+
+// ===== RETURN LIST =====
+function renderReturnList() {
+  const list = document.getElementById('returnList');
+  list.innerHTML = RETURN_PATIENTS.map(p => `
+    <div class="return-item">
+      <div class="return-avatar" style="background:${p.color};">${p.initials}</div>
+      <div class="return-info">
+        <div class="return-name">${p.name}</div>
+        <div class="return-date">${p.reason} · ${p.date}</div>
+      </div>
+      <button class="act-btn tg" style="font-size:11px;" onclick="showToast('success','✈️ Telegram','${p.name} ga qaytish eslatmasi yuborildi')">Eslatma</button>
+    </div>`).join('');
+}
+
+// ===== TOAST =====
+function showToast(type, title, message='', duration=3500) {
+  const icons={success:'✅',error:'❌',warning:'⚠️',info:'ℹ️'};
+  const c=document.getElementById('toastContainer'); if(!c) return;
+  const t=document.createElement('div'); t.className=`toast ${type}`;
+  t.innerHTML=`<div class="toast-icon">${icons[type]||'ℹ️'}</div><div class="toast-content"><div class="toast-title">${title}</div><div class="toast-message">${message}</div></div><div class="toast-close" onclick="this.parentElement.remove()">✕</div>`;
+  c.appendChild(t); setTimeout(()=>t?.remove(), duration);
+}
+
+// ===== INIT =====
+document.addEventListener('DOMContentLoaded', () => {
+  applyLanguage();
+  renderSchedule();
+  renderReturnList();
+  updateMissedAlert();
+  updateStats();
+  updateClock();
+  setInterval(updateClock, 30000);
+  // Highlight current lang button
+  document.getElementById('btn-'+currentLang)?.classList.add('active');
+  document.querySelectorAll('.lang-btn[id^="btn-"]').forEach(b => { if (b.id !== 'btn-'+currentLang) b.classList.remove('active'); });
+  // Auto-send reminder toast on load
+  setTimeout(() => showToast('info', '🔔 Eslatma', '8 ta bemor uchun ertangi qabul eslatmasi tayyorlandi'), 1500);
+});
+</script>
+</body>
+</html>

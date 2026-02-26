@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kirish — MediCare Pro</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@700;800&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --primary: #6366f1; --primary-dark: #4f46e5;
+      --success: #10b981; --error: #ef4444;
+      --text: #0f172a; --muted: #64748b;
+      --border: #e2e8f0; --bg: #f8faff;
+    }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      position: relative;
+      overflow: hidden;
+    }
+    /* Animated background */
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #06b6d4 100%);
+      opacity: 0.06;
+      z-index: 0;
+    }
+    .blob {
+      position: fixed;
+      border-radius: 50%;
+      opacity: 0.12;
+      animation: float 8s ease-in-out infinite;
+      z-index: 0;
+    }
+    .blob-1 { width: 400px; height: 400px; background: #6366f1; top: -100px; left: -100px; animation-delay: 0s; }
+    .blob-2 { width: 300px; height: 300px; background: #06b6d4; bottom: -80px; right: -80px; animation-delay: 3s; }
+    .blob-3 { width: 200px; height: 200px; background: #f43f5e; top: 40%; right: 10%; animation-delay: 5s; }
+    @keyframes float { 0%,100%{transform:translate(0,0) scale(1);} 50%{transform:translate(20px,-20px) scale(1.05);} }
+
+    .card {
+      position: relative; z-index: 1;
+      background: white;
+      border-radius: 28px;
+      padding: 44px 40px;
+      width: 100%;
+      max-width: 420px;
+      box-shadow: 0 20px 60px rgba(99,102,241,0.12), 0 4px 16px rgba(0,0,0,0.06);
+      border: 1px solid rgba(255,255,255,0.8);
+    }
+    .logo { display: flex; align-items: center; gap: 12px; margin-bottom: 32px; }
+    .logo-icon {
+      width: 50px; height: 50px;
+      background: linear-gradient(135deg, #6366f1, #8b5cf6);
+      border-radius: 16px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 26px;
+      box-shadow: 0 8px 20px rgba(99,102,241,0.35);
+    }
+    .logo-text { font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 800; font-size: 22px; color: var(--text); }
+    .logo-sub { font-size: 12px; color: var(--muted); margin-top: 1px; }
+
+    h1 { font-size: 24px; font-weight: 800; color: var(--text); margin-bottom: 6px; }
+    .subtitle { font-size: 14px; color: var(--muted); margin-bottom: 28px; }
+
+    .form-group { margin-bottom: 18px; }
+    label { display: block; font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 7px; }
+    input {
+      width: 100%; padding: 12px 16px;
+      border: 1.5px solid var(--border);
+      border-radius: 14px;
+      font-size: 14px; font-family: inherit;
+      color: var(--text);
+      background: #fafafa;
+      outline: none;
+      transition: all 0.2s;
+    }
+    input:focus { border-color: var(--primary); background: white; box-shadow: 0 0 0 4px rgba(99,102,241,0.1); }
+    input.error { border-color: var(--error); }
+
+    .password-wrap { position: relative; }
+    .toggle-pw {
+      position: absolute; right: 14px; top: 50%; transform: translateY(-50%);
+      cursor: pointer; font-size: 16px; color: var(--muted);
+      background: none; border: none; padding: 4px;
+    }
+
+    .btn {
+      width: 100%; padding: 14px;
+      background: linear-gradient(135deg, var(--primary), #8b5cf6);
+      color: white; font-size: 15px; font-weight: 700;
+      border: none; border-radius: 14px; cursor: pointer;
+      transition: all 0.2s;
+      box-shadow: 0 6px 20px rgba(99,102,241,0.35);
+      margin-top: 8px;
+    }
+    .btn:hover { transform: translateY(-2px); box-shadow: 0 10px 28px rgba(99,102,241,0.45); }
+    .btn:active { transform: translateY(0); }
+    .btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+
+    .error-msg {
+      background: #fef2f2; color: var(--error);
+      border: 1px solid #fca5a5;
+      border-radius: 12px; padding: 12px 14px;
+      font-size: 13px; font-weight: 600;
+      margin-bottom: 16px; display: none;
+    }
+    .error-msg.show { display: flex; align-items: center; gap: 8px; }
+
+    .quick-login { margin-top: 24px; border-top: 1px solid var(--border); padding-top: 20px; }
+    .ql-title { font-size: 12px; color: var(--muted); font-weight: 600; text-align: center; margin-bottom: 12px; }
+    .ql-btns { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
+    .ql-btn {
+      padding: 10px 8px;
+      border-radius: 12px;
+      border: 1.5px solid var(--border);
+      background: white;
+      cursor: pointer;
+      text-align: center;
+      transition: all 0.15s;
+      font-size: 11px;
+      font-family: inherit;
+    }
+    .ql-btn:hover { border-color: var(--primary); background: #f5f3ff; }
+    .ql-btn .ql-icon { font-size: 20px; display: block; margin-bottom: 4px; }
+    .ql-btn .ql-label { font-weight: 700; font-size: 11px; color: var(--text); }
+    .ql-btn .ql-role { font-size: 10px; color: var(--muted); margin-top: 1px; }
+
+    .links { margin-top: 20px; text-align: center; font-size: 13px; color: var(--muted); }
+    .links a { color: var(--primary); font-weight: 600; text-decoration: none; }
+    .links a:hover { text-decoration: underline; }
+
+    .spinner {
+      width: 18px; height: 18px;
+      border: 2.5px solid rgba(255,255,255,0.4);
+      border-top-color: white;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      display: none; margin: 0 auto;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .status-badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 5px 12px; border-radius: 20px;
+      font-size: 11px; font-weight: 700;
+      background: #ecfdf5; color: #059669;
+      margin-bottom: 20px;
+    }
+    .status-badge.offline { background: #fef9c3; color: #92400e; }
+    .status-dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; animation: pulse 2s infinite; }
+    @keyframes pulse { 0%,100%{opacity:1;} 50%{opacity:0.4;} }
+
+    @media (max-width: 480px) { .card { padding: 32px 24px; border-radius: 20px; } }
+  </style>
+</head>
+<body>
+  <div class="blob blob-1"></div>
+  <div class="blob blob-2"></div>
+  <div class="blob blob-3"></div>
+
+  <div class="card">
+    <div class="logo">
+      <div class="logo-icon">🏥</div>
+      <div>
+        <div class="logo-text">MediCare Pro</div>
+        <div class="logo-sub">Tibbiy klinika tizimi</div>
+      </div>
+    </div>
+
+    <div class="status-badge offline" id="serverStatus">
+      <span class="status-dot"></span>
+      <span id="statusText">Server tekshirilmoqda...</span>
+    </div>
+
+    <h1>Xush kelibsiz 👋</h1>
+    <p class="subtitle">Tizimga kirish uchun ma'lumotlaringizni kiriting</p>
+
+    <div class="error-msg" id="errorMsg">
+      <span>⚠️</span> <span id="errorText"></span>
+    </div>
+
+    <form id="loginForm" onsubmit="doLogin(event)">
+      <div class="form-group">
+        <label for="email">Email manzil</label>
+        <input type="email" id="email" placeholder="admin@medicare.pro" required autocomplete="email">
+      </div>
+      <div class="form-group">
+        <label for="password">Parol</label>
+        <div class="password-wrap">
+          <input type="password" id="password" placeholder="Parolni kiriting" required autocomplete="current-password">
+          <button type="button" class="toggle-pw" onclick="togglePw()" id="eyeIcon">👁️</button>
+        </div>
+      </div>
+      <button type="submit" class="btn" id="loginBtn">
+        <span id="btnText">Kirish →</span>
+        <div class="spinner" id="spinner"></div>
+      </button>
+    </form>
+
+    <div class="quick-login">
+      <div class="ql-title">⚡ Tezkor kirish (Demo)</div>
+      <div class="ql-btns">
+        <button class="ql-btn" onclick="quickLogin('admin@medicare.pro','admin123')">
+          <span class="ql-icon">⚙️</span>
+          <div class="ql-label">Admin</div>
+          <div class="ql-role">Bosh admin</div>
+        </button>
+        <button class="ql-btn" onclick="quickLogin('reception@medicare.pro','reception123')">
+          <span class="ql-icon">🏪</span>
+          <div class="ql-label">Qabulxona</div>
+          <div class="ql-role">Resepshn</div>
+        </button>
+        <button class="ql-btn" onclick="quickLogin('doctor@medicare.pro','doctor123')">
+          <span class="ql-icon">👨‍⚕️</span>
+          <div class="ql-label">Shifokor</div>
+          <div class="ql-role">Dr. Aliyev</div>
+        </button>
+      </div>
+    </div>
+
+    <div class="links">
+      <a href="index.html">← Saytga qaytish</a>
+      &nbsp;·&nbsp;
+      <a href="index.html#contact">Yordam</a>
+    </div>
+  </div>
+
+<script>
+const API_BASE = 'http://localhost:3000/api';
+
+// Check if already logged in
+if (localStorage.getItem('mc_token')) {
+  window.location.href = 'admin.html';
+}
+
+// Server status check
+async function checkServer() {
+  const badge = document.getElementById('serverStatus');
+  const text = document.getElementById('statusText');
+  try {
+    const res = await fetch(API_BASE + '/health', { signal: AbortSignal.timeout(3000) });
+    if (res.ok) {
+      badge.classList.remove('offline');
+      text.textContent = 'Server faol · mahalliy rejim';
+    } else throw new Error();
+  } catch {
+    badge.classList.add('offline');
+    text.textContent = 'Server o\'chiq · Demo rejim';
+  }
+}
+checkServer();
+
+async function doLogin(e) {
+  e.preventDefault();
+  const email = document.getElementById('email').value.trim();
+  const password = document.getElementById('password').value;
+  const btn = document.getElementById('loginBtn');
+  const btnText = document.getElementById('btnText');
+  const spinner = document.getElementById('spinner');
+  const errorMsg = document.getElementById('errorMsg');
+  const errorText = document.getElementById('errorText');
+
+  // UI: loading state
+  btn.disabled = true;
+  btnText.style.display = 'none';
+  spinner.style.display = 'block';
+  errorMsg.classList.remove('show');
+
+  try {
+    const res = await fetch(API_BASE + '/auth/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password })
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Kirish amalga oshmadi');
+
+    localStorage.setItem('mc_token', data.token);
+    localStorage.setItem('mc_user', JSON.stringify(data.user));
+
+    // Redirect based on role
+    const role = data.user.role;
+    if (role === 'reception') window.location.href = 'reception.html';
+    else window.location.href = 'admin.html';
+
+  } catch (err) {
+    // Demo fallback mode
+    const DEMO = {
+      'admin@medicare.pro': { password: 'admin123', role: 'admin', name: 'Admin Karimov' },
+      'reception@medicare.pro': { password: 'reception123', role: 'reception', name: 'Fatima Yusupova' },
+      'doctor@medicare.pro': { password: 'doctor123', role: 'doctor', name: 'Dr. Amir Aliyev' },
+    };
+    const user = DEMO[email];
+    if (user && user.password === password) {
+      const demoUser = { id: 'demo-1', name: user.name, email, role: user.role, clinic: 'City Medical Center' };
+      localStorage.setItem('mc_token', 'demo_token_' + Date.now());
+      localStorage.setItem('mc_user', JSON.stringify(demoUser));
+      if (user.role === 'reception') window.location.href = 'reception.html';
+      else window.location.href = 'admin.html';
+      return;
+    }
+    errorText.textContent = err.message;
+    errorMsg.classList.add('show');
+    document.getElementById('email').classList.add('error');
+    document.getElementById('password').classList.add('error');
+  } finally {
+    btn.disabled = false;
+    btnText.style.display = 'inline';
+    spinner.style.display = 'none';
+  }
+}
+
+function quickLogin(email, password) {
+  document.getElementById('email').value = email;
+  document.getElementById('password').value = password;
+  document.getElementById('email').classList.remove('error');
+  document.getElementById('password').classList.remove('error');
+  document.getElementById('errorMsg').classList.remove('show');
+  document.getElementById('loginForm').requestSubmit();
+}
+
+function togglePw() {
+  const pw = document.getElementById('password');
+  const icon = document.getElementById('eyeIcon');
+  if (pw.type === 'password') { pw.type = 'text'; icon.textContent = '🔒'; }
+  else { pw.type = 'password'; icon.textContent = '👁️'; }
+}
+
+document.querySelectorAll('input').forEach(el => {
+  el.addEventListener('input', () => el.classList.remove('error'));
+});
+</script>
+</body>
+</html>

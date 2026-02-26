@@ -1,0 +1,671 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Antigravity — Beyond the Limits of Technology</title>
+<meta name="description" content="Antigravity is the next-generation AI platform for developers, designers, and innovators. Experience technology without limits.">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0B0C1A;
+  --bg2: #0E1028;
+  --blue: #1E90FF;
+  --blue-dim: rgba(30,144,255,0.15);
+  --blue-glow: rgba(30,144,255,0.35);
+  --fuchsia: #FF4081;
+  --fuchsia-dim: rgba(255,64,129,0.15);
+  --fuchsia-glow: rgba(255,64,129,0.35);
+  --gray: #F0F0F0;
+  --muted: rgba(240,240,240,0.5);
+  --border: rgba(30,144,255,0.2);
+  --card-bg: rgba(14,16,40,0.8);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;font-size:16px;}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--gray);overflow-x:hidden;line-height:1.6;}
+::-webkit-scrollbar{width:4px;}
+::-webkit-scrollbar-track{background:var(--bg);}
+::-webkit-scrollbar-thumb{background:var(--blue);border-radius:4px;}
+
+/* ── CANVAS ── */
+#canvas{position:fixed;inset:0;z-index:0;pointer-events:none;}
+
+/* ── GLOW ORBS ── */
+.orb{position:fixed;border-radius:50%;filter:blur(80px);pointer-events:none;z-index:0;animation:drift 12s ease-in-out infinite;}
+.orb-1{width:500px;height:500px;background:rgba(30,144,255,0.12);top:-150px;left:-100px;animation-delay:0s;}
+.orb-2{width:400px;height:400px;background:rgba(255,64,129,0.1);bottom:-100px;right:-80px;animation-delay:5s;}
+.orb-3{width:300px;height:300px;background:rgba(30,144,255,0.08);top:40%;right:10%;animation-delay:9s;}
+@keyframes drift{0%,100%{transform:translate(0,0);}50%{transform:translate(30px,-30px);}}
+
+/* ── NAV ── */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:20px 40px;display:flex;align-items:center;justify-content:space-between;transition:all 0.4s;backdrop-filter:blur(0);border-bottom:1px solid transparent;}
+nav.scrolled{backdrop-filter:blur(20px);background:rgba(11,12,26,0.85);border-bottom-color:var(--border);}
+.nav-logo{display:flex;align-items:center;gap:12px;text-decoration:none;}
+.nav-logo-icon{width:38px;height:38px;background:linear-gradient(135deg,var(--blue),var(--fuchsia));border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;box-shadow:0 0 20px var(--blue-glow);}
+.nav-logo-text{font-size:20px;font-weight:800;color:var(--gray);letter-spacing:-0.5px;}
+.nav-links{display:flex;align-items:center;gap:36px;}
+.nav-links a{color:var(--muted);text-decoration:none;font-size:14px;font-weight:500;transition:color 0.2s;position:relative;}
+.nav-links a::after{content:'';position:absolute;bottom:-4px;left:0;right:0;height:1px;background:var(--blue);transform:scaleX(0);transition:transform 0.2s;}
+.nav-links a:hover{color:var(--gray);}
+.nav-links a:hover::after{transform:scaleX(1);}
+.nav-cta{display:flex;align-items:center;gap:12px;}
+.btn-ghost{padding:9px 20px;border:1px solid var(--border);border-radius:8px;color:var(--gray);background:transparent;font-size:13px;font-weight:600;cursor:pointer;transition:all 0.2s;font-family:inherit;text-decoration:none;}
+.btn-ghost:hover{border-color:var(--blue);background:var(--blue-dim);box-shadow:0 0 16px var(--blue-glow);}
+.btn-primary{padding:10px 22px;background:linear-gradient(135deg,var(--blue),#1268d6);border:none;border-radius:8px;color:white;font-size:13px;font-weight:700;cursor:pointer;transition:all 0.2s;font-family:inherit;text-decoration:none;box-shadow:0 4px 20px var(--blue-glow);}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 30px var(--blue-glow);}
+
+/* ── HERO ── */
+.hero{position:relative;z-index:1;min-height:100vh;display:flex;align-items:center;justify-content:center;text-align:center;padding:120px 24px 80px;}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(30,144,255,0.1);border:1px solid rgba(30,144,255,0.3);border-radius:50px;padding:6px 16px;font-size:12px;font-weight:600;color:var(--blue);margin-bottom:28px;animation:fadeUp 0.8s ease both;}
+.hero-badge-dot{width:6px;height:6px;border-radius:50%;background:var(--blue);animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1);}50%{opacity:0.5;transform:scale(0.8);}}
+.hero h1{font-size:clamp(3rem,8vw,5.5rem);font-weight:900;line-height:1.05;letter-spacing:-2px;margin-bottom:24px;animation:fadeUp 0.8s 0.1s ease both;}
+.hero h1 span.blue{color:var(--blue);text-shadow:0 0 40px var(--blue-glow);}
+.hero h1 span.fuchsia{color:var(--fuchsia);text-shadow:0 0 40px var(--fuchsia-glow);}
+.hero-sub{font-size:clamp(1rem,2vw,1.2rem);color:var(--muted);max-width:580px;margin:0 auto 40px;line-height:1.8;animation:fadeUp 0.8s 0.2s ease both;}
+.hero-actions{display:flex;align-items:center;justify-content:center;gap:14px;flex-wrap:wrap;animation:fadeUp 0.8s 0.3s ease both;}
+.btn-hero{padding:15px 36px;font-size:15px;border-radius:12px;}
+.hero-stats{display:flex;align-items:center;justify-content:center;gap:48px;margin-top:72px;animation:fadeUp 0.8s 0.4s ease both;}
+.hero-stat-value{font-size:2.2rem;font-weight:900;color:var(--gray);letter-spacing:-1px;}
+.hero-stat-label{font-size:12px;color:var(--muted);font-weight:500;margin-top:2px;}
+.hero-divider{width:1px;height:40px;background:var(--border);}
+@keyframes fadeUp{from{opacity:0;transform:translateY(24px);}to{opacity:1;transform:translateY(0);}}
+
+/* ── MARQUEE ── */
+.marquee-wrap{position:relative;z-index:1;overflow:hidden;border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:18px 0;background:rgba(30,144,255,0.03);}
+.marquee{display:flex;gap:60px;animation:marquee 30s linear infinite;white-space:nowrap;width:max-content;}
+.marquee-item{display:flex;align-items:center;gap:10px;font-size:13px;font-weight:600;color:var(--muted);}
+.marquee-item span{font-size:18px;}
+@keyframes marquee{from{transform:translateX(0);}to{transform:translateX(-50%);}}
+
+/* ── SECTION ── */
+section{position:relative;z-index:1;}
+.section-inner{max-width:1160px;margin:0 auto;padding:100px 24px;}
+.section-label{font-size:11px;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:var(--blue);margin-bottom:16px;}
+.section-title{font-size:clamp(2rem,4vw,3rem);font-weight:800;line-height:1.15;letter-spacing:-1px;margin-bottom:16px;}
+.section-sub{font-size:1rem;color:var(--muted);max-width:520px;line-height:1.8;}
+
+/* ── FEATURES ── */
+.features-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:60px;}
+.feature-card{background:var(--card-bg);border:1px solid var(--border);border-radius:20px;padding:32px;position:relative;overflow:hidden;transition:all 0.3s;cursor:default;}
+.feature-card::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,var(--blue-dim),transparent);opacity:0;transition:opacity 0.3s;}
+.feature-card:hover{transform:translateY(-6px);border-color:rgba(30,144,255,0.5);box-shadow:0 20px 50px rgba(30,144,255,0.15);}
+.feature-card:hover::before{opacity:1;}
+.feature-card.fuchsia-card::before{background:linear-gradient(135deg,var(--fuchsia-dim),transparent);}
+.feature-card.fuchsia-card:hover{border-color:rgba(255,64,129,0.5);box-shadow:0 20px 50px rgba(255,64,129,0.15);}
+.feature-icon{width:52px;height:52px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:24px;margin-bottom:20px;}
+.fi-blue{background:var(--blue-dim);box-shadow:0 0 20px var(--blue-glow);}
+.fi-fuchsia{background:var(--fuchsia-dim);box-shadow:0 0 20px var(--fuchsia-glow);}
+.fi-purple{background:rgba(139,92,246,0.15);box-shadow:0 0 20px rgba(139,92,246,0.3);}
+.feature-title{font-size:1.1rem;font-weight:700;margin-bottom:10px;}
+.feature-desc{font-size:13px;color:var(--muted);line-height:1.7;}
+.feature-tag{display:inline-block;margin-top:16px;font-size:11px;font-weight:700;padding:4px 12px;border-radius:20px;background:var(--blue-dim);color:var(--blue);border:1px solid rgba(30,144,255,0.2);}
+
+/* ── HOW IT WORKS ── */
+.how-grid{display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:center;margin-top:60px;}
+.how-steps{display:flex;flex-direction:column;gap:32px;}
+.how-step{display:flex;gap:20px;align-items:flex-start;}
+.step-num{width:40px;height:40px;border-radius:12px;background:linear-gradient(135deg,var(--blue),var(--fuchsia));display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;flex-shrink:0;box-shadow:0 4px 20px var(--blue-glow);}
+.step-content .step-title{font-size:15px;font-weight:700;margin-bottom:6px;}
+.step-content .step-desc{font-size:13px;color:var(--muted);line-height:1.7;}
+
+/* Dashboard mockup */
+.mockup{background:rgba(14,16,40,0.9);border:1px solid var(--border);border-radius:20px;padding:24px;box-shadow:0 30px 80px rgba(0,0,0,0.5),0 0 60px var(--blue-glow);position:relative;overflow:hidden;}
+.mockup::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--blue),var(--fuchsia),var(--blue));}
+.mockup-bar{display:flex;align-items:center;gap:8px;margin-bottom:20px;}
+.mockup-dot{width:10px;height:10px;border-radius:50%;}
+.mockup-dot:nth-child(1){background:#ff5f57;}
+.mockup-dot:nth-child(2){background:#febc2e;}
+.mockup-dot:nth-child(3){background:#28c840;}
+.mockup-row{display:grid;grid-template-columns:1fr 2fr;gap:16px;margin-bottom:16px;}
+.mockup-block{border-radius:10px;background:rgba(30,144,255,0.07);border:1px solid var(--border);}
+.mockup-block.h-sm{height:60px;}
+.mockup-block.h-md{height:100px;}
+.mockup-block.h-lg{height:140px;}
+.mockup-block.glow-blue{box-shadow:0 0 20px var(--blue-glow);border-color:rgba(30,144,255,0.4);}
+.mockup-block.glow-pink{box-shadow:0 0 20px var(--fuchsia-glow);border-color:rgba(255,64,129,0.4);background:rgba(255,64,129,0.07);}
+.chart-bars{display:flex;align-items:flex-end;gap:6px;padding:16px;height:100%;}
+.chart-bar{flex:1;border-radius:4px 4px 0 0;animation:growBar 1.5s ease both;}
+@keyframes growBar{from{height:0;}to{}}
+.cb1{height:60%;background:linear-gradient(to top,var(--blue),rgba(30,144,255,0.4));}
+.cb2{height:80%;background:linear-gradient(to top,var(--blue),rgba(30,144,255,0.4));}
+.cb3{height:45%;background:linear-gradient(to top,var(--blue),rgba(30,144,255,0.4));}
+.cb4{height:90%;background:linear-gradient(to top,var(--fuchsia),rgba(255,64,129,0.4));}
+.cb5{height:70%;background:linear-gradient(to top,var(--blue),rgba(30,144,255,0.4));}
+.cb6{height:55%;background:linear-gradient(to top,var(--blue),rgba(30,144,255,0.4));}
+.cb7{height:85%;background:linear-gradient(to top,var(--fuchsia),rgba(255,64,129,0.4));}
+
+/* ── TESTIMONIALS ── */
+.testi-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:60px;}
+.testi-card{background:var(--card-bg);border:1px solid var(--border);border-radius:20px;padding:28px;transition:all 0.3s;}
+.testi-card:hover{border-color:rgba(30,144,255,0.4);transform:translateY(-4px);}
+.testi-stars{color:#FFB800;font-size:13px;margin-bottom:14px;letter-spacing:2px;}
+.testi-text{font-size:14px;color:var(--muted);line-height:1.8;margin-bottom:20px;font-style:italic;}
+.testi-author{display:flex;align-items:center;gap:12px;}
+.testi-avatar{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;flex-shrink:0;}
+.ta-blue{background:linear-gradient(135deg,var(--blue),#1268d6);}
+.ta-fuchsia{background:linear-gradient(135deg,var(--fuchsia),#c21f5e);}
+.ta-purple{background:linear-gradient(135deg,#8b5cf6,#6d28d9);}
+.testi-name{font-size:13px;font-weight:700;}
+.testi-role{font-size:11px;color:var(--muted);}
+
+/* ── PRICING ── */
+.pricing-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:60px;align-items:start;}
+.pricing-card{background:var(--card-bg);border:1px solid var(--border);border-radius:24px;padding:36px;transition:all 0.3s;position:relative;overflow:hidden;}
+.pricing-card.featured{border-color:var(--blue);box-shadow:0 0 60px var(--blue-glow);}
+.pricing-card.featured::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--blue),var(--fuchsia));}
+.pricing-badge{position:absolute;top:20px;right:20px;background:linear-gradient(135deg,var(--blue),var(--fuchsia));color:white;font-size:10px;font-weight:800;padding:4px 12px;border-radius:20px;text-transform:uppercase;letter-spacing:0.05em;}
+.pricing-tier{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--muted);margin-bottom:12px;}
+.pricing-price{font-size:3rem;font-weight:900;color:var(--gray);letter-spacing:-2px;line-height:1;}
+.pricing-price sup{font-size:1.2rem;font-weight:700;vertical-align:top;margin-top:10px;display:inline-block;}
+.pricing-period{font-size:13px;color:var(--muted);margin:8px 0 24px;}
+.pricing-features{display:flex;flex-direction:column;gap:12px;margin-bottom:28px;}
+.pf-item{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--muted);}
+.pf-check{width:18px;height:18px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:9px;flex-shrink:0;}
+.pf-check.on{background:rgba(30,144,255,0.2);color:var(--blue);}
+.pf-check.off{background:rgba(240,240,240,0.05);color:rgba(240,240,240,0.2);}
+.btn-pricing{width:100%;padding:14px;border-radius:12px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;transition:all 0.2s;}
+.btn-pricing.solid{background:linear-gradient(135deg,var(--blue),#1268d6);border:none;color:white;box-shadow:0 4px 20px var(--blue-glow);}
+.btn-pricing.solid:hover{transform:translateY(-2px);box-shadow:0 8px 30px var(--blue-glow);}
+.btn-pricing.outline{background:transparent;border:1px solid var(--border);color:var(--muted);}
+.btn-pricing.outline:hover{border-color:var(--blue);color:var(--gray);}
+
+/* ── CTA SECTION ── */
+.cta-section{position:relative;z-index:1;text-align:center;}
+.cta-inner{max-width:700px;margin:0 auto;padding:100px 24px;}
+.cta-glow{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:600px;height:300px;background:radial-gradient(ellipse,rgba(30,144,255,0.15) 0%,transparent 70%);pointer-events:none;}
+.cta-title{font-size:clamp(2.5rem,5vw,4rem);font-weight:900;line-height:1.1;letter-spacing:-2px;margin-bottom:20px;}
+.cta-sub{font-size:1rem;color:var(--muted);margin-bottom:40px;line-height:1.8;}
+.cta-actions{display:flex;align-items:center;justify-content:center;gap:14px;flex-wrap:wrap;}
+
+/* ── FOOTER ── */
+footer{position:relative;z-index:1;border-top:1px solid var(--border);padding:60px 24px 32px;}
+.footer-inner{max-width:1160px;margin:0 auto;}
+.footer-top{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:40px;margin-bottom:60px;}
+.footer-brand p{font-size:13px;color:var(--muted);margin-top:12px;line-height:1.8;max-width:280px;}
+.footer-col-title{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--gray);margin-bottom:16px;}
+.footer-links{display:flex;flex-direction:column;gap:10px;}
+.footer-links a{color:var(--muted);text-decoration:none;font-size:13px;transition:color 0.2s;}
+.footer-links a:hover{color:var(--blue);}
+.footer-bottom{display:flex;align-items:center;justify-content:space-between;border-top:1px solid var(--border);padding-top:28px;font-size:12px;color:var(--muted);}
+.footer-socials{display:flex;gap:16px;}
+.social-btn{width:36px;height:36px;border-radius:10px;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:14px;cursor:pointer;transition:all 0.2s;text-decoration:none;}
+.social-btn:hover{border-color:var(--blue);background:var(--blue-dim);box-shadow:0 0 12px var(--blue-glow);}
+
+/* ── SCROLL REVEAL ── */
+.reveal{opacity:0;transform:translateY(32px);transition:opacity 0.7s ease,transform 0.7s ease;}
+.reveal.visible{opacity:1;transform:translateY(0);}
+
+/* ── MOBILE ── */
+@media(max-width:900px){
+  nav{padding:16px 20px;}
+  .nav-links{display:none;}
+  .features-grid,.testi-grid,.pricing-grid{grid-template-columns:1fr;}
+  .how-grid{grid-template-columns:1fr;}
+  .mockup{display:none;}
+  .footer-top{grid-template-columns:1fr 1fr;}
+  .footer-bottom{flex-direction:column;gap:16px;text-align:center;}
+  .hero-stats{flex-wrap:wrap;gap:24px;}
+  .hero-divider{display:none;}
+}
+@media(max-width:480px){
+  .footer-top{grid-template-columns:1fr;}
+  .hero-actions{flex-direction:column;align-items:stretch;}
+  .btn-hero{text-align:center;}
+}
+
+/* ── FLOATING DOTS ── */
+.float-shape{position:absolute;border-radius:50%;pointer-events:none;}
+</style>
+</head>
+<body>
+
+<canvas id="canvas"></canvas>
+<div class="orb orb-1"></div>
+<div class="orb orb-2"></div>
+<div class="orb orb-3"></div>
+
+<!-- NAV -->
+<nav id="nav">
+  <a href="#" class="nav-logo">
+    <div class="nav-logo-icon">⚡</div>
+    <span class="nav-logo-text">Antigravity</span>
+  </a>
+  <div class="nav-links">
+    <a href="#features">Features</a>
+    <a href="#how">How it works</a>
+    <a href="#pricing">Pricing</a>
+    <a href="#testimonials">Reviews</a>
+    <a href="#contact">Contact</a>
+  </div>
+  <div class="nav-cta">
+    <a href="#" class="btn-ghost">Sign in</a>
+    <a href="#pricing" class="btn-primary">Get started →</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div>
+    <div class="hero-badge"><span class="hero-badge-dot"></span> Now in public beta · v2.0</div>
+    <h1>Build without<br><span class="blue">limits.</span> Ship at<br><span class="fuchsia">light speed.</span></h1>
+    <p class="hero-sub">Antigravity is the AI-native development platform that removes friction from every workflow. Designed for developers who refuse to settle.</p>
+    <div class="hero-actions">
+      <a href="#pricing" class="btn-primary btn-hero">Start for free →</a>
+      <a href="#how" class="btn-ghost btn-hero">See how it works</a>
+    </div>
+    <div class="hero-stats">
+      <div><div class="hero-stat-value">48k+</div><div class="hero-stat-label">Active developers</div></div>
+      <div class="hero-divider"></div>
+      <div><div class="hero-stat-value">2.1M</div><div class="hero-stat-label">Deployments</div></div>
+      <div class="hero-divider"></div>
+      <div><div class="hero-stat-value">99.99%</div><div class="hero-stat-label">Uptime SLA</div></div>
+      <div class="hero-divider"></div>
+      <div><div class="hero-stat-value">4.9★</div><div class="hero-stat-label">Developer rating</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- MARQUEE -->
+<div class="marquee-wrap">
+  <div class="marquee" id="marquee">
+    <div class="marquee-item"><span>⚡</span> Zero-latency deploys</div>
+    <div class="marquee-item"><span>🤖</span> AI code generation</div>
+    <div class="marquee-item"><span>🔒</span> Enterprise security</div>
+    <div class="marquee-item"><span>🌐</span> Edge-native runtime</div>
+    <div class="marquee-item"><span>📦</span> One-click rollbacks</div>
+    <div class="marquee-item"><span>📊</span> Real-time analytics</div>
+    <div class="marquee-item"><span>🔗</span> Any stack, any cloud</div>
+    <div class="marquee-item"><span>⚡</span> Zero-latency deploys</div>
+    <div class="marquee-item"><span>🤖</span> AI code generation</div>
+    <div class="marquee-item"><span>🔒</span> Enterprise security</div>
+    <div class="marquee-item"><span>🌐</span> Edge-native runtime</div>
+    <div class="marquee-item"><span>📦</span> One-click rollbacks</div>
+    <div class="marquee-item"><span>📊</span> Real-time analytics</div>
+    <div class="marquee-item"><span>🔗</span> Any stack, any cloud</div>
+  </div>
+</div>
+
+<!-- FEATURES -->
+<section id="features">
+  <div class="section-inner">
+    <div class="reveal">
+      <div class="section-label">Core capabilities</div>
+      <h2 class="section-title">Everything elite teams need.<br>Nothing they don't.</h2>
+      <p class="section-sub">From zero to production in minutes. Antigravity handles the infrastructure, you handle the innovation.</p>
+    </div>
+    <div class="features-grid">
+      <div class="feature-card reveal">
+        <div class="feature-icon fi-blue">⚡</div>
+        <div class="feature-title">Edge-Native Runtime</div>
+        <p class="feature-desc">Deploy globally to 200+ edge locations with sub-10ms cold starts. Your code runs where your users are — always.</p>
+        <span class="feature-tag">Infrastructure</span>
+      </div>
+      <div class="feature-card reveal" style="transition-delay:0.1s;">
+        <div class="feature-icon fi-fuchsia">🤖</div>
+        <div class="feature-title">AI Co-Pilot</div>
+        <p class="feature-desc">Context-aware AI that understands your entire codebase. Generate, refactor, debug, and deploy with natural language commands.</p>
+        <span class="feature-tag" style="background:var(--fuchsia-dim);color:var(--fuchsia);border-color:rgba(255,64,129,0.2);">AI-Powered</span>
+      </div>
+      <div class="feature-card reveal" style="transition-delay:0.2s;">
+        <div class="feature-icon fi-purple">📊</div>
+        <div class="feature-title">Observability Suite</div>
+        <p class="feature-desc">Real-time logs, traces, and metrics in one unified dashboard. Detect anomalies before they become incidents.</p>
+        <span class="feature-tag" style="background:rgba(139,92,246,0.15);color:#8b5cf6;border-color:rgba(139,92,246,0.2);">Monitoring</span>
+      </div>
+      <div class="feature-card fuchsia-card reveal" style="transition-delay:0.1s;">
+        <div class="feature-icon fi-fuchsia">🔒</div>
+        <div class="feature-title">Zero-Trust Security</div>
+        <p class="feature-desc">SOC2 Type II, GDPR, and HIPAA compliant by default. Every request is verified, every secret is encrypted at rest and in transit.</p>
+        <span class="feature-tag" style="background:var(--fuchsia-dim);color:var(--fuchsia);border-color:rgba(255,64,129,0.2);">Security</span>
+      </div>
+      <div class="feature-card reveal" style="transition-delay:0.2s;">
+        <div class="feature-icon fi-blue">🔗</div>
+        <div class="feature-title">Universal Integrations</div>
+        <p class="feature-desc">Connect to 400+ services. GitHub, Linear, Slack, Datadog, AWS, GCP — everything you already use, plugged in instantly.</p>
+        <span class="feature-tag">Integrations</span>
+      </div>
+      <div class="feature-card reveal" style="transition-delay:0.3s;">
+        <div class="feature-icon fi-blue">📦</div>
+        <div class="feature-title">Instant Rollbacks</div>
+        <p class="feature-desc">Every deployment is immutable and versioned. Roll back to any prior state in one click, zero downtime, zero data loss.</p>
+        <span class="feature-tag">Reliability</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section id="how" style="background:rgba(14,16,40,0.5);border-top:1px solid var(--border);border-bottom:1px solid var(--border);">
+  <div class="section-inner">
+    <div class="how-grid">
+      <div class="reveal">
+        <div class="section-label">How it works</div>
+        <h2 class="section-title">From idea to<br>production in minutes.</h2>
+        <div class="how-steps" style="margin-top:36px;">
+          <div class="how-step">
+            <div class="step-num">1</div>
+            <div class="step-content">
+              <div class="step-title">Connect your repository</div>
+              <div class="step-desc">Push to GitHub, GitLab, or Bitbucket. Antigravity detects your stack automatically — no config files needed.</div>
+            </div>
+          </div>
+          <div class="how-step">
+            <div class="step-num">2</div>
+            <div class="step-content">
+              <div class="step-title">AI reviews and optimizes</div>
+              <div class="step-desc">Our co-pilot scans every pull request, suggests improvements, catches bugs, and benchmarks performance before it ships.</div>
+            </div>
+          </div>
+          <div class="how-step">
+            <div class="step-num">3</div>
+            <div class="step-content">
+              <div class="step-title">Deploy globally, instantly</div>
+              <div class="step-desc">One command. 200+ edge regions. Automatic CDN, SSL, and DDoS protection. Your users get the fastest possible experience.</div>
+            </div>
+          </div>
+          <div class="how-step">
+            <div class="step-num">4</div>
+            <div class="step-content">
+              <div class="step-title">Monitor and iterate faster</div>
+              <div class="step-desc">Live metrics, AI-powered alerts, and automated rollbacks keep you in control. Ship daily without fear.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="reveal" style="transition-delay:0.2s;">
+        <div class="mockup">
+          <div class="mockup-bar">
+            <div class="mockup-dot"></div>
+            <div class="mockup-dot"></div>
+            <div class="mockup-dot"></div>
+          </div>
+          <div class="mockup-row">
+            <div class="mockup-block h-sm glow-blue" style="display:flex;align-items:center;justify-content:center;font-size:24px;">⚡</div>
+            <div class="mockup-block h-sm glow-pink" style="display:flex;align-items:center;padding:0 16px;font-size:12px;font-weight:700;color:var(--fuchsia);">AI Co-Pilot Active ●</div>
+          </div>
+          <div class="mockup-block h-md glow-blue" style="margin-bottom:16px;">
+            <div class="chart-bars">
+              <div class="chart-bar cb1"></div>
+              <div class="chart-bar cb2"></div>
+              <div class="chart-bar cb3"></div>
+              <div class="chart-bar cb4"></div>
+              <div class="chart-bar cb5"></div>
+              <div class="chart-bar cb6"></div>
+              <div class="chart-bar cb7"></div>
+            </div>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;">
+            <div class="mockup-block" style="height:48px;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:3px;"><div style="font-size:14px;font-weight:800;color:var(--blue);">2.1M</div><div style="font-size:9px;color:var(--muted);">Deploys</div></div>
+            <div class="mockup-block glow-pink" style="height:48px;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:3px;"><div style="font-size:14px;font-weight:800;color:var(--fuchsia);">8ms</div><div style="font-size:9px;color:var(--muted);">P99 latency</div></div>
+            <div class="mockup-block" style="height:48px;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:3px;"><div style="font-size:14px;font-weight:800;color:var(--blue);">99.99%</div><div style="font-size:9px;color:var(--muted);">Uptime</div></div>
+          </div>
+          <div class="mockup-block h-sm" style="margin-top:12px;display:flex;align-items:center;gap:10px;padding:0 16px;">
+            <div style="width:8px;height:8px;border-radius:50%;background:var(--blue);box-shadow:0 0 8px var(--blue-glow);animation:pulse 2s infinite;"></div>
+            <div style="font-size:11px;color:var(--muted);">Deploy #2,187,441 complete — <span style="color:var(--blue);">0 errors</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section id="testimonials">
+  <div class="section-inner">
+    <div class="reveal" style="text-align:center;">
+      <div class="section-label">Social proof</div>
+      <h2 class="section-title">Loved by elite teams.</h2>
+    </div>
+    <div class="testi-grid">
+      <div class="testi-card reveal">
+        <div class="testi-stars">★★★★★</div>
+        <p class="testi-text">"We cut our deployment pipeline from 45 minutes to under 3. The AI reviewer alone is worth the subscription — it's caught three critical bugs in production PRs."</p>
+        <div class="testi-author">
+          <div class="testi-avatar ta-blue">AK</div>
+          <div><div class="testi-name">Alex Kim</div><div class="testi-role">CTO — Vercel-backed startup</div></div>
+        </div>
+      </div>
+      <div class="testi-card reveal" style="transition-delay:0.1s;">
+        <div class="testi-stars">★★★★★</div>
+        <p class="testi-text">"Antigravity is what I wish every dev tool felt like. Zero friction, instant feedback, and the observability suite has completely replaced our four separate monitoring tools."</p>
+        <div class="testi-author">
+          <div class="testi-avatar ta-fuchsia">SR</div>
+          <div><div class="testi-name">Sara Reyes</div><div class="testi-role">Lead Engineer — Series B fintech</div></div>
+        </div>
+      </div>
+      <div class="testi-card reveal" style="transition-delay:0.2s;">
+        <div class="testi-stars">★★★★★</div>
+        <p class="testi-text">"I migrated our entire microservices architecture in a weekend. The automatic config detection is witchcraft. 60 services, zero manual YAML. This is the future."</p>
+        <div class="testi-author">
+          <div class="testi-avatar ta-purple">MH</div>
+          <div><div class="testi-name">Marcus Holtz</div><div class="testi-role">Principal SRE — Fortune 500</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section id="pricing" style="background:rgba(14,16,40,0.5);border-top:1px solid var(--border);border-bottom:1px solid var(--border);">
+  <div class="section-inner">
+    <div class="reveal" style="text-align:center;">
+      <div class="section-label">Pricing</div>
+      <h2 class="section-title">Simple. Transparent.<br>No surprises.</h2>
+    </div>
+    <div class="pricing-grid">
+      <div class="pricing-card reveal">
+        <div class="pricing-tier">Starter</div>
+        <div class="pricing-price"><sup>$</sup>0</div>
+        <div class="pricing-period">Free forever</div>
+        <div class="pricing-features">
+          <div class="pf-item"><span class="pf-check on">✓</span> 3 projects</div>
+          <div class="pf-item"><span class="pf-check on">✓</span> 100k edge requests/mo</div>
+          <div class="pf-item"><span class="pf-check on">✓</span> AI Co-Pilot (basic)</div>
+          <div class="pf-item"><span class="pf-check on">✓</span> 1 team member</div>
+          <div class="pf-item"><span class="pf-check off">✗</span> Custom domains</div>
+          <div class="pf-item"><span class="pf-check off">✗</span> Advanced analytics</div>
+        </div>
+        <button class="btn-pricing outline">Get started free</button>
+      </div>
+      <div class="pricing-card featured reveal" style="transition-delay:0.1s;">
+        <div class="pricing-badge">Most popular</div>
+        <div class="pricing-tier">Pro</div>
+        <div class="pricing-price"><sup>$</sup>49</div>
+        <div class="pricing-period">per month · billed annually</div>
+        <div class="pricing-features">
+          <div class="pf-item"><span class="pf-check on">✓</span> Unlimited projects</div>
+          <div class="pf-item"><span class="pf-check on">✓</span> 10M edge requests/mo</div>
+          <div class="pf-item"><span class="pf-check on">✓</span> AI Co-Pilot (full)</div>
+          <div class="pf-item"><span class="pf-check on">✓</span> Up to 10 members</div>
+          <div class="pf-item"><span class="pf-check on">✓</span> Custom domains + SSL</div>
+          <div class="pf-item"><span class="pf-check on">✓</span> Advanced analytics</div>
+        </div>
+        <button class="btn-pricing solid">Start Pro trial →</button>
+      </div>
+      <div class="pricing-card reveal" style="transition-delay:0.2s;">
+        <div class="pricing-tier">Enterprise</div>
+        <div class="pricing-price" style="font-size:2rem;padding-top:8px;">Custom</div>
+        <div class="pricing-period">Talk to our team</div>
+        <div class="pricing-features">
+          <div class="pf-item"><span class="pf-check on">✓</span> Unlimited everything</div>
+          <div class="pf-item"><span class="pf-check on">✓</span> Private edge clusters</div>
+          <div class="pf-item"><span class="pf-check on">✓</span> Dedicated AI models</div>
+          <div class="pf-item"><span class="pf-check on">✓</span> 99.99% SLA</div>
+          <div class="pf-item"><span class="pf-check on">✓</span> SOC2 / HIPAA / GDPR</div>
+          <div class="pf-item"><span class="pf-check on">✓</span> 24/7 dedicated support</div>
+        </div>
+        <button class="btn-pricing outline">Contact sales</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section" id="contact">
+  <div class="cta-glow"></div>
+  <div class="cta-inner reveal">
+    <div class="section-label" style="text-align:center;">Ready?</div>
+    <h2 class="cta-title">The future of<br>development <span style="color:var(--blue);">starts</span><br><span style="color:var(--fuchsia);">right now.</span></h2>
+    <p class="cta-sub">Join 48,000+ developers who've already left behind slow pipelines, tedious configs, and DevOps bottlenecks. It takes 90 seconds to get started.</p>
+    <div class="cta-actions">
+      <a href="#pricing" class="btn-primary btn-hero">Start free — no credit card</a>
+      <a href="#how" class="btn-ghost btn-hero">Watch demo</a>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <a href="#" class="nav-logo" style="margin-bottom:4px;">
+          <div class="nav-logo-icon" style="width:32px;height:32px;font-size:16px;">⚡</div>
+          <span class="nav-logo-text" style="font-size:16px;">Antigravity</span>
+        </a>
+        <p>The AI-native development platform built for teams that refuse to compromise on speed, reliability, or developer experience.</p>
+        <div class="footer-socials" style="margin-top:20px;">
+          <a href="#" class="social-btn">𝕏</a>
+          <a href="#" class="social-btn">in</a>
+          <a href="#" class="social-btn">gh</a>
+          <a href="#" class="social-btn">▶</a>
+        </div>
+      </div>
+      <div>
+        <div class="footer-col-title">Product</div>
+        <div class="footer-links">
+          <a href="#">Features</a><a href="#">Pricing</a><a href="#">Changelog</a><a href="#">Roadmap</a><a href="#">Status</a>
+        </div>
+      </div>
+      <div>
+        <div class="footer-col-title">Developers</div>
+        <div class="footer-links">
+          <a href="#">Documentation</a><a href="#">API Reference</a><a href="#">CLI</a><a href="#">SDKs</a><a href="#">Open Source</a>
+        </div>
+      </div>
+      <div>
+        <div class="footer-col-title">Company</div>
+        <div class="footer-links">
+          <a href="#">About</a><a href="#">Blog</a><a href="#">Careers</a><a href="#">Privacy</a><a href="#">Terms</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div>© 2026 Antigravity Inc. All rights reserved.</div>
+      <div style="display:flex;gap:6px;align-items:center;font-size:11px;">
+        <span style="width:7px;height:7px;border-radius:50%;background:var(--blue);display:inline-block;animation:pulse 2s infinite;"></span>
+        All systems operational
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+// ── PARTICLE CANVAS ──
+const canvas = document.getElementById('canvas');
+const ctx = canvas.getContext('2d');
+let W, H, particles = [];
+
+function resize() {
+  W = canvas.width = window.innerWidth;
+  H = canvas.height = window.innerHeight;
+}
+resize();
+window.addEventListener('resize', resize);
+
+class Particle {
+  constructor() { this.reset(true); }
+  reset(initial) {
+    this.x = Math.random() * W;
+    this.y = initial ? Math.random() * H : H + 10;
+    this.size = Math.random() * 1.5 + 0.3;
+    this.speedY = -(Math.random() * 0.4 + 0.1);
+    this.speedX = (Math.random() - 0.5) * 0.2;
+    this.opacity = Math.random() * 0.7 + 0.2;
+    this.color = Math.random() > 0.7 ? '#FF4081' : '#1E90FF';
+  }
+  update() {
+    this.y += this.speedY;
+    this.x += this.speedX;
+    if (this.y < -10) this.reset(false);
+  }
+  draw() {
+    ctx.save();
+    ctx.globalAlpha = this.opacity;
+    ctx.fillStyle = this.color;
+    ctx.shadowBlur = 6;
+    ctx.shadowColor = this.color;
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+  }
+}
+
+for (let i = 0; i < 120; i++) particles.push(new Particle());
+
+function animate() {
+  ctx.clearRect(0, 0, W, H);
+  particles.forEach(p => { p.update(); p.draw(); });
+  requestAnimationFrame(animate);
+}
+animate();
+
+// ── NAV SCROLL ──
+window.addEventListener('scroll', () => {
+  document.getElementById('nav').classList.toggle('scrolled', window.scrollY > 40);
+});
+
+// ── SCROLL REVEAL ──
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: 0.12 });
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+// ── PARALLAX ──
+window.addEventListener('scroll', () => {
+  const y = window.scrollY;
+  document.querySelector('.hero h1').style.transform = `translateY(${y * 0.12}px)`;
+  document.querySelector('.hero .hero-sub').style.transform = `translateY(${y * 0.08}px)`;
+});
+
+// ── MOUSE GLOW FOLLOW ──
+document.addEventListener('mousemove', e => {
+  document.querySelectorAll('.feature-card').forEach(card => {
+    const rect = card.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    card.style.setProperty('--mx', x + 'px');
+    card.style.setProperty('--my', y + 'px');
+  });
+});
+
+// ── COUNTER ANIMATION ──
+function animateCounter(el, target, suffix = '') {
+  let current = 0;
+  const step = target / 60;
+  const timer = setInterval(() => {
+    current = Math.min(current + step, target);
+    el.textContent = (Number.isInteger(target) ? Math.floor(current) : current.toFixed(2)) + suffix;
+    if (current >= target) clearInterval(timer);
+  }, 16);
+}
+const statsObserver = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      statsObserver.unobserve(e.target);
+      const vals = [48, 2.1, 99.99, 4.9];
+      const suffixes = ['k+', 'M', '%', '★'];
+      e.target.querySelectorAll('.hero-stat-value').forEach((el, i) => {
+        animateCounter(el, vals[i], suffixes[i]);
+      });
+    }
+  });
+}, { threshold: 0.5 });
+const heroStats = document.querySelector('.hero-stats');
+if (heroStats) statsObserver.observe(heroStats);
+</script>
+</body>
+</html>

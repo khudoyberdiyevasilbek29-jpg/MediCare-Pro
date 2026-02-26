@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Super Admin — MediCare Pro</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/variables.css">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/dashboard.css">
+  <style>
+    :root { --bg-sidebar: #0f0f23; --bg-sidebar-hover: #1a1a3e; }
+    .super-badge { background:linear-gradient(135deg,#fbbf24,#f59e0b);color:#1a1a00;font-size:10px;font-weight:800;padding:2px 8px;border-radius:20px;letter-spacing:0.05em;text-transform:uppercase; }
+    .clinic-status-dot { width:8px;height:8px;border-radius:50%;display:inline-block;margin-right:6px; }
+  </style>
+</head>
+<body style="background:var(--bg-secondary);">
+<div id="toastContainer" class="toast-container"></div>
+<div class="sidebar-mobile-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+
+<div class="dashboard-wrapper">
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <div class="sidebar-logo" style="background:linear-gradient(135deg,#fbbf24,#f59e0b);">⚡</div>
+      <div class="sidebar-brand">
+        <div class="sidebar-brand-name">MediCare Pro</div>
+        <div style="margin-top:3px;"><span class="super-badge">Super Admin</span></div>
+      </div>
+      <div class="sidebar-toggle" onclick="toggleSidebar()">⟨</div>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="sidebar-section-title">Overview</div>
+      <div class="sidebar-menu">
+        <div class="sidebar-item active" onclick="showPage('overview')"><span class="item-icon">📊</span><span class="item-label">Dashboard</span></div>
+        <div class="sidebar-item" onclick="showPage('clinics')"><span class="item-icon">🏥</span><span class="item-label">All Clinics</span><span class="item-badge">12</span></div>
+        <div class="sidebar-item" onclick="showPage('revenue')"><span class="item-icon">💰</span><span class="item-label">Revenue</span></div>
+      </div>
+      <div class="sidebar-section-title">Management</div>
+      <div class="sidebar-menu">
+        <div class="sidebar-item" onclick="showPage('subscriptions')"><span class="item-icon">💳</span><span class="item-label">Subscriptions</span></div>
+        <div class="sidebar-item" onclick="showPage('users')"><span class="item-icon">👥</span><span class="item-label">All Admins</span></div>
+        <div class="sidebar-item" onclick="showPage('analytics')"><span class="item-icon">📈</span><span class="item-label">Platform Analytics</span></div>
+      </div>
+      <div class="sidebar-section-title">Quick Links</div>
+      <div class="sidebar-menu">
+        <div class="sidebar-item" onclick="window.location.href='admin.html'"><span class="item-icon">⚙️</span><span class="item-label">Clinic Dashboard</span></div>
+        <div class="sidebar-item" onclick="window.location.href='index.html'"><span class="item-icon">🌐</span><span class="item-label">Public Website</span></div>
+      </div>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="sidebar-user">
+        <div class="sidebar-user-avatar" style="background:linear-gradient(135deg,#fbbf24,#f59e0b);color:#1a1a00;">SA</div>
+        <div class="sidebar-user-info">
+          <div class="sidebar-user-name">Super Admin</div>
+          <div class="sidebar-user-role">Platform Owner</div>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <main class="dashboard-main" id="dashMain">
+    <div class="topbar">
+      <div class="topbar-left">
+        <div style="display:flex;align-items:center;gap:10px;">
+          <span style="font-size:18px;">⚡</span>
+          <div>
+            <div style="font-weight:700;font-size:14px;">Super Admin Panel</div>
+            <div style="font-size:11px;color:var(--text-muted);">Platform-wide management</div>
+          </div>
+        </div>
+      </div>
+      <div class="topbar-right">
+        <div class="topbar-btn" onclick="showToast('info','Alerts','3 new system alerts')">🔔<span class="notification-dot"></span></div>
+        <a href="admin.html" class="btn btn-secondary btn-sm">Clinic Admin</a>
+        <a href="index.html" class="btn btn-ghost btn-sm">Website</a>
+      </div>
+    </div>
+
+    <div class="dashboard-content">
+
+      <!-- OVERVIEW PAGE -->
+      <div class="dash-page active" id="page-overview">
+        <div class="page-header">
+          <div><div class="page-title">Platform Overview ⚡</div><div class="page-subtitle">Real-time data across all clinics</div></div>
+          <div class="page-header-right">
+            <button class="btn btn-primary" onclick="openModal('addClinicModal')">+ Add Clinic</button>
+          </div>
+        </div>
+        <div class="dashboard-stats">
+          <div class="stat-card primary">
+            <div class="stat-icon" style="background:var(--primary-50);">🏥</div>
+            <div class="stat-value">12</div>
+            <div class="stat-label">Active Clinics</div>
+            <div class="stat-change up">↑ 2 new this month</div>
+          </div>
+          <div class="stat-card success">
+            <div class="stat-icon" style="background:var(--success-bg);">👥</div>
+            <div class="stat-value">14,820</div>
+            <div class="stat-label">Total Patients</div>
+            <div class="stat-change up">↑ 18% this month</div>
+          </div>
+          <div class="stat-card warning">
+            <div class="stat-icon" style="background:var(--warning-bg);">💰</div>
+            <div class="stat-value">$98,400</div>
+            <div class="stat-label">Monthly Revenue (All)</div>
+            <div class="stat-change up">↑ 24% vs last month</div>
+          </div>
+          <div class="stat-card info">
+            <div class="stat-icon" style="background:var(--info-bg);">💳</div>
+            <div class="stat-value">$14,760</div>
+            <div class="stat-label">Platform MRR</div>
+            <div class="stat-change up">↑ 15% subscription growth</div>
+          </div>
+        </div>
+
+        <div class="dashboard-grid-main" style="margin-top:var(--space-6);">
+          <div class="card">
+            <div class="card-header">
+              <div style="font-weight:700;">Platform Revenue Trend</div>
+              <div class="tabs" style="padding:2px;">
+                <div class="tab-btn active" style="padding:4px 10px;font-size:11px;">Monthly</div>
+                <div class="tab-btn" style="padding:4px 10px;font-size:11px;">Quarterly</div>
+              </div>
+            </div>
+            <div class="card-body">
+              <div class="chart-bars" id="superRevenueChart" style="height:180px;"></div>
+              <div class="chart-labels" id="superChartLabels"></div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-header"><div style="font-weight:700;">Subscription Breakdown</div></div>
+            <div class="card-body">
+              <div style="display:flex;flex-direction:column;gap:12px;" id="subBreakdown"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="dashboard-grid-3" style="margin-top:var(--space-6);">
+          <div class="card" style="grid-column:1/3;">
+            <div class="card-header"><div style="font-weight:700;">Top Performing Clinics</div><button class="btn btn-ghost btn-sm" onclick="showPage('clinics')">View all →</button></div>
+            <div class="card-body" style="padding:0;">
+              <div class="table-wrapper">
+                <table class="table">
+                  <thead><tr><th>Clinic</th><th>Location</th><th>Patients</th><th>Revenue</th><th>Plan</th><th>Status</th><th>Actions</th></tr></thead>
+                  <tbody id="topClinicsTable"></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-header"><div style="font-weight:700;">Recent Activity</div></div>
+            <div class="card-body" style="padding-top:0;" id="superActivity"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- CLINICS PAGE -->
+      <div class="dash-page" id="page-clinics">
+        <div class="page-header">
+          <div><div class="page-title">All Clinics</div><div class="page-subtitle">Manage all registered clinic tenants</div></div>
+          <div class="page-header-right">
+            <select class="form-control" style="width:auto;" onchange="filterClinics(this.value)">
+              <option>All Plans</option><option>Starter</option><option>Professional</option><option>Enterprise</option>
+            </select>
+            <button class="btn btn-primary" onclick="openModal('addClinicModal')">+ Add Clinic</button>
+          </div>
+        </div>
+        <div class="grid grid-3 gap-6" id="clinicsGrid"></div>
+      </div>
+
+      <!-- REVENUE PAGE -->
+      <div class="dash-page" id="page-revenue">
+        <div class="page-header">
+          <div><div class="page-title">Platform Revenue</div><div class="page-subtitle">Combined financial overview across all clinics</div></div>
+          <div class="page-header-right"><button class="btn btn-secondary">📥 Export Report</button></div>
+        </div>
+        <div class="dashboard-stats">
+          <div class="stat-card primary"><div class="stat-icon" style="background:var(--primary-50);">📊</div><div class="stat-value">$1.18M</div><div class="stat-label">Annual Platform Revenue</div><div class="stat-change up">↑ 34% YoY</div></div>
+          <div class="stat-card success"><div class="stat-icon" style="background:var(--success-bg);">💳</div><div class="stat-value">$177.1k</div><div class="stat-label">Annual Subscription Revenue</div><div class="stat-change up">↑ 28% YoY</div></div>
+          <div class="stat-card warning"><div class="stat-icon" style="background:var(--warning-bg);">💰</div><div class="stat-value">$98.4k</div><div class="stat-label">Peak Monthly Revenue</div><div class="stat-change up">Feb 2026</div></div>
+          <div class="stat-card info"><div class="stat-icon" style="background:var(--info-bg);">📈</div><div class="stat-value">$8,200</div><div class="stat-label">Avg Revenue per Clinic</div><div class="stat-change up">↑ 12%</div></div>
+        </div>
+        <div style="display:grid;grid-template-columns:2fr 1fr;gap:var(--space-6);margin-top:var(--space-6);">
+          <div class="card">
+            <div class="card-header"><div style="font-weight:700;">Platform Revenue by Month</div></div>
+            <div class="card-body">
+              <div class="chart-bars" id="platformRevChart" style="height:200px;"></div>
+              <div class="chart-labels" style="display:grid;grid-template-columns:repeat(12,1fr);">
+                <div class="chart-label">J</div><div class="chart-label">F</div><div class="chart-label">M</div><div class="chart-label">A</div>
+                <div class="chart-label">M</div><div class="chart-label">J</div><div class="chart-label">J</div><div class="chart-label">A</div>
+                <div class="chart-label">S</div><div class="chart-label">O</div><div class="chart-label">N</div><div class="chart-label">D</div>
+              </div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-header"><div style="font-weight:700;">Revenue by Plan</div></div>
+            <div class="card-body" id="revByPlan"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SUBSCRIPTIONS PAGE -->
+      <div class="dash-page" id="page-subscriptions">
+        <div class="page-header">
+          <div><div class="page-title">Subscriptions</div><div class="page-subtitle">Manage clinic subscription plans and billing</div></div>
+        </div>
+        <div class="dashboard-stats">
+          <div class="stat-card primary"><div class="stat-icon" style="background:var(--primary-50);">💳</div><div class="stat-value">9</div><div class="stat-label">Active Plans</div><div class="stat-change up">↑ 2 this month</div></div>
+          <div class="stat-card success"><div class="stat-icon" style="background:var(--success-bg);">🔄</div><div class="stat-value">100%</div><div class="stat-label">Renewal Rate</div><div class="stat-change up">No churn this month</div></div>
+          <div class="stat-card warning"><div class="stat-icon" style="background:var(--warning-bg);">⏰</div><div class="stat-value">2</div><div class="stat-label">Trials Active</div><div class="stat-change">Ending soon</div></div>
+          <div class="stat-card info"><div class="stat-icon" style="background:var(--info-bg);">💰</div><div class="stat-value">$14,760</div><div class="stat-label">Monthly Recurring</div><div class="stat-change up">↑ 15%</div></div>
+        </div>
+        <div class="card" style="margin-top:var(--space-6);">
+          <div class="card-body" style="padding:0;">
+            <div class="table-wrapper">
+              <table class="table">
+                <thead><tr><th>Clinic</th><th>Plan</th><th>Amount</th><th>Status</th><th>Next Billing</th><th>Actions</th></tr></thead>
+                <tbody id="subscriptionsTable"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- USERS PAGE -->
+      <div class="dash-page" id="page-users">
+        <div class="page-header">
+          <div><div class="page-title">Platform Admins</div><div class="page-subtitle">Clinic administrators across all tenants</div></div>
+        </div>
+        <div class="card">
+          <div class="card-body" style="padding:0;">
+            <div class="table-wrapper">
+              <table class="table">
+                <thead><tr><th>Admin</th><th>Clinic</th><th>Email</th><th>Role</th><th>Status</th><th>Last Login</th></tr></thead>
+                <tbody id="usersTable"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ANALYTICS PAGE -->
+      <div class="dash-page" id="page-analytics">
+        <div class="page-header">
+          <div><div class="page-title">Platform Analytics</div><div class="page-subtitle">Growth, engagement, and performance metrics</div></div>
+        </div>
+        <div class="dashboard-stats">
+          <div class="stat-card primary"><div class="stat-icon" style="background:var(--primary-50);">🌐</div><div class="stat-value">42,840</div><div class="stat-label">Monthly Website Visits</div><div class="stat-change up">↑ 31%</div></div>
+          <div class="stat-card success"><div class="stat-icon" style="background:var(--success-bg);">📅</div><div class="stat-value">55,620</div><div class="stat-label">Appointments This Month</div><div class="stat-change up">↑ 19%</div></div>
+          <div class="stat-card warning"><div class="stat-icon" style="background:var(--warning-bg);">🔔</div><div class="stat-value">125k+</div><div class="stat-label">Reminders Sent</div><div class="stat-change up">↑ 22%</div></div>
+          <div class="stat-card info"><div class="stat-icon" style="background:var(--info-bg);">⭐</div><div class="stat-value">4.87</div><div class="stat-label">Avg Platform Rating</div><div class="stat-change up">↑ 0.12</div></div>
+        </div>
+        <div style="margin-top:var(--space-6);display:grid;grid-template-columns:1fr 1fr;gap:var(--space-6);">
+          <div class="card">
+            <div class="card-header"><div style="font-weight:700;">Clinic Growth</div></div>
+            <div class="card-body">
+              <div class="chart-bars" id="clinicGrowthChart" style="height:160px;"></div>
+              <div class="chart-labels">
+                <div class="chart-label">Q1 24</div><div class="chart-label">Q2 24</div><div class="chart-label">Q3 24</div>
+                <div class="chart-label">Q4 24</div><div class="chart-label">Q1 25</div><div class="chart-label">Q2 25</div>
+                <div class="chart-label">Q3 25</div><div class="chart-label">Q4 25</div>
+              </div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-header"><div style="font-weight:700;">Platform Conversion</div></div>
+            <div class="card-body" style="display:flex;flex-direction:column;gap:14px;">
+              ${[{n:'Trial Signups',v:28,p:100},{n:'Converted to Paid',v:21,p:75},{n:'Upgraded Plans',v:9,p:43},{n:'Churned',v:1,p:5}].map(c=>`
+              <div>
+                <div style="display:flex;justify-content:space-between;margin-bottom:5px;"><span style="font-size:13px;font-weight:600;">${c.n}</span><span style="font-size:13px;font-weight:800;">${c.v}</span></div>
+                <div class="progress-bar"><div class="progress-fill" style="width:${c.p}%;"></div></div>
+              </div>`).join('')}
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+</div>
+
+<!-- ADD CLINIC MODAL -->
+<div class="modal-overlay" id="addClinicModal">
+  <div class="modal modal-lg">
+    <div class="modal-header"><div class="modal-title">🏥 Add New Clinic</div><div class="modal-close" onclick="closeModal('addClinicModal')">✕</div></div>
+    <div class="modal-body" style="display:flex;flex-direction:column;gap:var(--space-4);">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:var(--space-4);">
+        <div class="form-group"><label class="form-label">Clinic Name <span class="required">*</span></label><input type="text" class="form-control" placeholder="e.g. City Medical Center"></div>
+        <div class="form-group"><label class="form-label">City / Location</label><input type="text" class="form-control" placeholder="New York, NY"></div>
+        <div class="form-group"><label class="form-label">Admin Email <span class="required">*</span></label><input type="email" class="form-control" placeholder="admin@clinic.com"></div>
+        <div class="form-group"><label class="form-label">Phone</label><input type="tel" class="form-control" placeholder="+1 (555) ..."></div>
+        <div class="form-group"><label class="form-label">Subscription Plan</label>
+          <select class="form-control"><option>Starter — $49/mo</option><option>Professional — $149/mo</option><option>Enterprise — $399/mo</option><option>Trial (14 days)</option></select></div>
+        <div class="form-group"><label class="form-label">Specialty</label>
+          <select class="form-control"><option>General Practice</option><option>Multi-Specialty</option><option>Dental</option><option>Eye Clinic</option></select></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('addClinicModal')">Cancel</button>
+      <button class="btn btn-primary" onclick="addClinic()">✅ Create Clinic</button>
+    </div>
+  </div>
+</div>
+
+<script>
+function showToast(type, title, message='', duration=4000) {
+  const icons={success:'✅',error:'❌',warning:'⚠️',info:'ℹ️'};
+  const c=document.getElementById('toastContainer');
+  if(!c) return;
+  const t=document.createElement('div');
+  t.className=`toast ${type}`;
+  t.innerHTML=`<div class="toast-icon">${icons[type]||'ℹ️'}</div><div class="toast-content"><div class="toast-title">${title}</div><div class="toast-message">${message}</div></div><div class="toast-close" onclick="this.parentElement.remove()">✕</div>`;
+  c.appendChild(t); setTimeout(()=>t?.remove(), duration);
+}
+function openModal(id){const e=document.getElementById(id);if(e){e.classList.add('active');document.body.style.overflow='hidden';}}
+function closeModal(id){const e=document.getElementById(id);if(e){e.classList.remove('active');document.body.style.overflow='';}}
+document.querySelectorAll('.modal-overlay').forEach(o=>o.addEventListener('click',e=>{if(e.target===o)closeModal(o.id);}));
+
+let sidebarCollapsed=false;
+function toggleSidebar(){sidebarCollapsed=!sidebarCollapsed;const s=document.getElementById('sidebar'),m=document.getElementById('dashMain');s.classList.toggle('collapsed',sidebarCollapsed);m.classList.toggle('sidebar-collapsed',sidebarCollapsed);}
+function closeSidebar(){document.getElementById('sidebar')?.classList.remove('mobile-open');document.getElementById('sidebarOverlay')?.classList.remove('active');document.body.style.overflow='';}
+
+function showPage(name){
+  document.querySelectorAll('.dash-page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.sidebar-item').forEach(i=>i.classList.remove('active'));
+  document.getElementById('page-'+name)?.classList.add('active');
+  document.querySelector(`[onclick="showPage('${name}')"]`)?.classList.add('active');
+  if(name==='clinics') renderClinicsGrid();
+  if(name==='subscriptions') renderSubscriptions();
+  if(name==='users') renderUsers();
+  if(name==='revenue') renderPlatformRevenue();
+  if(name==='analytics') renderPlatformAnalytics();
+}
+
+const CLINICS = [
+  {name:'City Medical Center',loc:'New York, NY',patients:1284,revenue:32400,plan:'Enterprise',status:'active',emoji:'🏥',color:'#6366f1'},
+  {name:'Sunrise Health Clinic',loc:'Los Angeles, CA',patients:986,revenue:21800,plan:'Professional',status:'active',emoji:'🌟',color:'#06b6d4'},
+  {name:'MedPlus Clinic',loc:'Chicago, IL',patients:742,revenue:18200,plan:'Professional',status:'active',emoji:'💊',color:'#10b981'},
+  {name:'Valley Care Hospital',loc:'Houston, TX',patients:654,revenue:15600,plan:'Starter',status:'active',emoji:'🏥',color:'#f43f5e'},
+  {name:'Pacific Eye Center',loc:'Seattle, WA',patients:412,revenue:12800,plan:'Professional',status:'active',emoji:'👁️',color:'#8b5cf6'},
+  {name:'Atlas Dental',loc:'Phoenix, AZ',patients:389,revenue:9200,plan:'Starter',status:'trial',emoji:'🦷',color:'#f59e0b'},
+];
+
+const PLAN_BADGE={Enterprise:'<span class="badge" style="background:#fde8f6;color:#c026d3;">Enterprise</span>',Professional:'<span class="badge badge-primary">Professional</span>',Starter:'<span class="badge badge-gray">Starter</span>',Trial:'<span class="badge badge-warning">Trial</span>'};
+const STATUS_BADGE={active:'<span class="badge badge-success">● Active</span>',trial:'<span class="badge badge-warning">⏱ Trial</span>',expired:'<span class="badge badge-error">✕ Expired</span>'};
+
+function renderTopClinicsTable(){
+  const body=document.getElementById('topClinicsTable');
+  if(!body) return;
+  body.innerHTML = CLINICS.slice(0,5).map(c=>`
+    <tr>
+      <td><div style="display:flex;align-items:center;gap:10px;"><div style="width:36px;height:36px;background:${c.color}22;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;">${c.emoji}</div><span style="font-weight:700;font-size:13px;">${c.name}</span></div></td>
+      <td style="font-size:13px;color:var(--text-muted);">📍 ${c.loc}</td>
+      <td style="font-weight:700;font-size:13px;">${c.patients.toLocaleString()}</td>
+      <td style="font-weight:800;color:var(--success);">$${(c.revenue/1000).toFixed(1)}k</td>
+      <td>${PLAN_BADGE[c.plan]||c.plan}</td>
+      <td>${STATUS_BADGE[c.status]||c.status}</td>
+      <td><button class="btn btn-primary btn-sm" onclick="showToast('info','Dashboard','Opening clinic dashboard...')">Manage</button></td>
+    </tr>`).join('');
+}
+
+function renderClinicsGrid(){
+  const g=document.getElementById('clinicsGrid');
+  if(!g) return;
+  g.innerHTML=CLINICS.map(c=>`
+  <div class="clinic-card">
+    <div class="clinic-card-header" style="background:linear-gradient(135deg,${c.color},${c.color}aa);">
+      <div class="clinic-card-icon">${c.emoji}</div>
+      <div>
+        <div class="clinic-card-name">${c.name}</div>
+        <div class="clinic-card-location">📍 ${c.loc}</div>
+      </div>
+      <div style="margin-left:auto;">${STATUS_BADGE[c.status]}</div>
+    </div>
+    <div class="clinic-card-body">
+      <div class="clinic-card-stats">
+        <div class="clinic-stat"><div class="clinic-stat-value">${c.patients}</div><div class="clinic-stat-label">Patients</div></div>
+        <div class="clinic-stat"><div class="clinic-stat-value">$${(c.revenue/1000).toFixed(1)}k</div><div class="clinic-stat-label">Revenue</div></div>
+        <div class="clinic-stat"><div class="clinic-stat-value">${PLAN_BADGE[c.plan]}</div><div class="clinic-stat-label">Plan</div></div>
+      </div>
+    </div>
+    <div class="clinic-card-footer">
+      <button class="btn btn-primary btn-sm" onclick="showToast('info','Opening','Loading ${c.name} dashboard...')">Manage</button>
+      <button class="btn btn-secondary btn-sm" onclick="showToast('info','Subscription','Opening billing...')">Billing</button>
+      <button class="btn btn-ghost btn-sm" onclick="showToast('warning','Suspend','Suspending clinic...')">Suspend</button>
+    </div>
+  </div>`).join('');
+}
+
+function renderSubscriptions(){
+  const body=document.getElementById('subscriptionsTable');
+  if(!body) return;
+  const data=[
+    {clinic:'City Medical Center',plan:'Enterprise',amount:'$399',status:'active',next:'Mar 1, 2026'},
+    {clinic:'Sunrise Health Clinic',plan:'Professional',amount:'$149',status:'active',next:'Mar 1, 2026'},
+    {clinic:'MedPlus Clinic',plan:'Professional',amount:'$149',status:'active',next:'Mar 15, 2026'},
+    {clinic:'Valley Care Hospital',plan:'Starter',amount:'$49',status:'active',next:'Feb 28, 2026'},
+    {clinic:'Pacific Eye Center',plan:'Professional',amount:'$149',status:'active',next:'Mar 10, 2026'},
+    {clinic:'Atlas Dental',plan:'Trial',amount:'$0',status:'trial',next:'Mar 5, 2026 (expires)'},
+  ];
+  body.innerHTML=data.map(s=>`
+    <tr>
+      <td style="font-weight:700;font-size:13px;">${s.clinic}</td>
+      <td>${PLAN_BADGE[s.plan]||s.plan}</td>
+      <td style="font-weight:800;color:var(--success);">${s.amount}/mo</td>
+      <td>${STATUS_BADGE[s.status]||s.status}</td>
+      <td style="font-size:13px;">${s.next}</td>
+      <td><div style="display:flex;gap:4px;">
+        <button class="btn btn-primary btn-sm" onclick="showToast('info','Upgrade','Opening upgrade flow...')">Upgrade</button>
+        <button class="btn btn-ghost btn-sm" onclick="showToast('warning','Cancel','Cancelling subscription...')">Cancel</button>
+      </div></td>
+    </tr>`).join('');
+}
+
+function renderUsers(){
+  const body=document.getElementById('usersTable');
+  if(!body) return;
+  const data=[
+    {name:'Admin Karimov',clinic:'City Medical Center',email:'admin@citymed.com',role:'Clinic Admin',status:'active',login:'Just now'},
+    {name:'Sarah Johnson',clinic:'Sunrise Health',email:'sarah@sunrise.com',role:'Clinic Admin',status:'active',login:'1 hr ago'},
+    {name:'Mike Chen',clinic:'MedPlus Clinic',email:'mike@medplus.com',role:'Clinic Admin',status:'active',login:'Today'},
+    {name:'Lisa Park',clinic:'Valley Care',email:'lisa@valley.com',role:'Clinic Admin',status:'active',login:'Yesterday'},
+  ];
+  body.innerHTML=data.map(u=>`
+    <tr>
+      <td><div style="display:flex;align-items:center;gap:8px;"><div class="avatar avatar-sm" style="background:var(--grad-primary);color:white;">${u.name.split(' ').map(n=>n[0]).join('').slice(0,2)}</div><span style="font-weight:600;font-size:13px;">${u.name}</span></div></td>
+      <td style="font-size:13px;">${u.clinic}</td>
+      <td style="font-size:13px;">${u.email}</td>
+      <td><span class="role-badge role-admin">${u.role}</span></td>
+      <td><span class="badge badge-success">Active</span></td>
+      <td style="font-size:13px;color:var(--text-muted);">${u.login}</td>
+    </tr>`).join('');
+}
+
+function renderPlatformRevenue(){
+  const vals=[62000,71000,68000,84000,98000,89000,112000,104000,118000,109000,128000,142000];
+  setTimeout(()=>{
+    const chart=document.getElementById('platformRevChart');
+    if(chart){const max=Math.max(...vals);chart.innerHTML=vals.map(v=>`<div class="chart-bar-group"><div class="chart-bar primary" style="height:${Math.round(v/max*100)}%;"></div></div>`).join('');}
+    const rbp=document.getElementById('revByPlan');
+    if(rbp) rbp.innerHTML=[{n:'Enterprise',v:7164,p:48,c:'#c026d3'},{n:'Professional',v:5364,p:36,c:'var(--primary)'},{n:'Starter',v:2232,p:15,c:'var(--success)'}].map(i=>`<div style="margin-bottom:14px;"><div style="display:flex;justify-content:space-between;margin-bottom:5px;"><span style="font-size:13px;font-weight:600;">${i.n}</span><span style="font-size:13px;font-weight:700;">$${i.v.toLocaleString()}/mo</span></div><div class="progress-bar"><div class="progress-fill" style="width:${i.p}%;background:${i.c};"></div></div><div style="text-align:right;font-size:11px;color:var(--text-muted);margin-top:2px;">${i.p}% of MRR</div></div>`).join('');
+  },50);
+}
+
+function renderPlatformAnalytics(){
+  setTimeout(()=>{
+    const cgc=document.getElementById('clinicGrowthChart');
+    if(cgc){const vals=[3,4,5,6,7,8,10,12];const max=Math.max(...vals);cgc.innerHTML=vals.map(v=>`<div class="chart-bar-group"><div class="chart-bar primary" style="height:${Math.round(v/max*100)}%;"></div></div>`).join('');}
+  },50);
+}
+
+function renderOverview(){
+  const months=['Jan','Feb','Mar','Apr','May','Jun'];
+  const vals=[52000,64000,58000,78000,89000,98400];
+  setTimeout(()=>{
+    const chart=document.getElementById('superRevenueChart');
+    const labels=document.getElementById('superChartLabels');
+    if(chart){const max=Math.max(...vals);chart.innerHTML=vals.map(v=>`<div class="chart-bar-group"><div class="chart-bar primary" style="height:${Math.round(v/max*100)}%;"></div></div>`).join('');}
+    if(labels) labels.innerHTML=months.map(m=>`<div class="chart-label">${m}</div>`).join('');
+    const sb=document.getElementById('subBreakdown');
+    if(sb) sb.innerHTML=[{plan:'Enterprise',count:3,pct:33,color:'#c026d3'},{plan:'Professional',count:5,pct:56,color:'var(--primary)'},{plan:'Starter',count:2,pct:22,color:'var(--success)'},{plan:'Trial',count:2,pct:22,color:'var(--warning)'}].map(s=>`<div style="margin-bottom:12px;"><div style="display:flex;justify-content:space-between;margin-bottom:5px;"><span style="font-size:13px;font-weight:600;">${s.plan}</span><span style="font-size:13px;font-weight:700;">${s.count} clinics</span></div><div class="progress-bar"><div class="progress-fill" style="width:${s.pct}%;background:${s.color};"></div></div></div>`).join('');
+    const ta=document.getElementById('superActivity');
+    if(ta) ta.innerHTML=[{text:'<strong>Atlas Dental</strong> started a 14-day trial',time:'2 hours ago',color:'var(--warning)'},{text:'<strong>City Medical</strong> revenue hit $32k this month',time:'Today',color:'var(--success)'},{text:'<strong>Sunrise Health</strong> upgraded to Professional plan',time:'Yesterday',color:'var(--primary)'},{text:'New clinic <strong>Valley Care</strong> registered',time:'3 days ago',color:'var(--info)'}].map(i=>`<div class="activity-item"><div class="activity-dot" style="background:${i.color};"></div><div class="activity-content"><div class="activity-text">${i.text}</div><div class="activity-time">${i.time}</div></div></div>`).join('');
+  },50);
+  renderTopClinicsTable();
+}
+
+function addClinic(){closeModal('addClinicModal');showToast('success','Clinic Created','New clinic tenant is live. Admin invitation sent.');}
+function filterClinics(plan){renderClinicsGrid();}
+
+document.addEventListener('DOMContentLoaded',()=>{ renderOverview(); });
+</script>
+</body>
+</html>

@@ -1,0 +1,718 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard — MediCare Pro</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/variables.css">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/dashboard.css">
+  <style>
+    body { background: var(--bg-secondary); }
+    .crm-tag { display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600; }
+  </style>
+</head>
+<body>
+<div id="toastContainer" class="toast-container"></div>
+
+<!-- MOBILE OVERLAY -->
+<div class="sidebar-mobile-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+
+<div class="dashboard-wrapper">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <div class="sidebar-logo">🏥</div>
+      <div class="sidebar-brand">
+        <div class="sidebar-brand-name">MediCare Pro</div>
+        <div class="sidebar-brand-role">Admin Dashboard</div>
+      </div>
+      <div class="sidebar-toggle" onclick="toggleSidebar()" data-tooltip="Toggle sidebar">⟨</div>
+    </div>
+
+    <nav class="sidebar-nav">
+      <div class="sidebar-section-title">Main</div>
+      <div class="sidebar-menu">
+        <div class="sidebar-item active" onclick="showPage('dashboard')" data-tooltip="Dashboard">
+          <span class="item-icon">📊</span><span class="item-label">Dashboard</span>
+        </div>
+        <div class="sidebar-item" onclick="showPage('appointments')" data-tooltip="Appointments">
+          <span class="item-icon">📅</span><span class="item-label">Appointments</span>
+          <span class="item-badge">8</span>
+        </div>
+        <div class="sidebar-item" onclick="showPage('patients')" data-tooltip="Patients">
+          <span class="item-icon">👥</span><span class="item-label">Patients</span>
+        </div>
+        <div class="sidebar-item" onclick="showPage('crm')" data-tooltip="CRM">
+          <span class="item-icon">🗂️</span><span class="item-label">CRM & Records</span>
+        </div>
+      </div>
+
+      <div class="sidebar-section-title">Management</div>
+      <div class="sidebar-menu">
+        <div class="sidebar-item" onclick="showPage('doctors')" data-tooltip="Doctors">
+          <span class="item-icon">👨‍⚕️</span><span class="item-label">Doctors</span>
+        </div>
+        <div class="sidebar-item" onclick="showPage('schedule')" data-tooltip="Schedule">
+          <span class="item-icon">🗓️</span><span class="item-label">Schedule</span>
+        </div>
+        <div class="sidebar-item" onclick="showPage('services')" data-tooltip="Services">
+          <span class="item-icon">🩺</span><span class="item-label">Services</span>
+        </div>
+        <div class="sidebar-item" onclick="showPage('staff')" data-tooltip="Staff">
+          <span class="item-icon">👔</span><span class="item-label">Staff & Roles</span>
+        </div>
+      </div>
+
+      <div class="sidebar-section-title">Finance</div>
+      <div class="sidebar-menu">
+        <div class="sidebar-item" onclick="showPage('revenue')" data-tooltip="Revenue">
+          <span class="item-icon">💰</span><span class="item-label">Revenue</span>
+        </div>
+        <div class="sidebar-item" onclick="showPage('payments')" data-tooltip="Payments">
+          <span class="item-icon">💳</span><span class="item-label">Payments</span>
+        </div>
+      </div>
+
+      <div class="sidebar-section-title">System</div>
+      <div class="sidebar-menu">
+        <div class="sidebar-item" onclick="showPage('automation')" data-tooltip="Automation">
+          <span class="item-icon">🤖</span><span class="item-label">Automation</span>
+          <span class="item-badge">3</span>
+        </div>
+        <div class="sidebar-item" onclick="showPage('analytics')" data-tooltip="Analytics">
+          <span class="item-icon">📈</span><span class="item-label">Analytics</span>
+        </div>
+        <div class="sidebar-item" onclick="showPage('telegram')" data-tooltip="Telegram Bot">
+          <span class="item-icon">✈️</span><span class="item-label">Telegram Bot</span>
+          <span class="item-badge" style="background:#0088cc;">Faol</span>
+        </div>
+        <div class="sidebar-item" onclick="window.location.href='reception.html'" data-tooltip="Qabulxona">
+          <span class="item-icon">🏪</span><span class="item-label">Qabulxona</span>
+        </div>
+        <div class="sidebar-item" onclick="window.location.href='super-admin.html'" data-tooltip="Super Admin">
+          <span class="item-icon">⚡</span><span class="item-label">Super Admin</span>
+        </div>
+      </div>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="sidebar-user" onclick="showToast('info','Profile','Settings coming soon!')">
+        <div class="sidebar-user-avatar">AK</div>
+        <div class="sidebar-user-info">
+          <div class="sidebar-user-name">Admin Karimov</div>
+          <div class="sidebar-user-role">Super Admin</div>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="dashboard-main" id="dashMain">
+
+    <!-- TOPBAR -->
+    <div class="topbar">
+      <div class="topbar-left">
+        <button class="topbar-btn" onclick="openSidebar()" style="display:none;" id="mobileMenuBtn">☰</button>
+        <div class="relative" style="flex:1;max-width:340px;">
+          <div style="position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--text-muted);font-size:16px;pointer-events:none;">🔍</div>
+          <input class="topbar-search" placeholder="Search patients, appointments..." id="globalSearch" oninput="handleSearch(this.value)">
+        </div>
+      </div>
+      <div class="topbar-right">
+        <div class="topbar-btn" onclick="showPage('automation')" data-tooltip="Automation alerts">
+          🔔<span class="notification-dot"></span>
+        </div>
+        <div class="topbar-btn" data-tooltip="Messages">💬</div>
+        <a href="reception.html" class="topbar-btn" data-tooltip="Qabulxona" style="font-size:13px;">🏪</a>
+        <a href="index.html" class="topbar-btn" data-tooltip="View Website" style="font-size:14px;">🌐</a>
+        <div class="topbar-btn" onclick="cycleLang()" data-tooltip="Til" id="langToggle" style="font-size:11px;font-weight:800;color:var(--primary);">UZ</div>
+        <div class="topbar-btn" data-tooltip="Settings">⚙️</div>
+        <div style="width:36px;height:36px;background:var(--grad-primary);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:white;cursor:pointer;">AK</div>
+      </div>
+    </div>
+
+    <div class="dashboard-content">
+
+      <!-- ===== DASHBOARD HOME ===== -->
+      <div class="dash-page active" id="page-dashboard">
+        <div class="page-header">
+          <div>
+            <div class="page-title">Good afternoon, Admin 👋</div>
+            <div class="page-subtitle">Thursday, Feb 26, 2026 — Here's what's happening today</div>
+          </div>
+          <div class="page-header-right">
+            <button class="btn btn-secondary btn-sm" onclick="showPage('analytics')">📈 Analytics</button>
+            <button class="btn btn-primary btn-sm" onclick="openModal('addApptModal')">+ New Appointment</button>
+          </div>
+        </div>
+
+        <!-- Stats -->
+        <div class="dashboard-stats">
+          <div class="stat-card primary">
+            <div class="flex items-center justify-between">
+              <div class="stat-icon" style="background:var(--primary-50);">📅</div>
+              <span class="badge badge-primary">Today</span>
+            </div>
+            <div class="stat-value" id="statAppts">24</div>
+            <div class="stat-label">Appointments</div>
+            <div class="stat-change up">↑ 3 more than yesterday</div>
+          </div>
+          <div class="stat-card success">
+            <div class="flex items-center justify-between">
+              <div class="stat-icon" style="background:var(--success-bg);">👥</div>
+              <span class="badge badge-success">Active</span>
+            </div>
+            <div class="stat-value">1,284</div>
+            <div class="stat-label">Total Patients</div>
+            <div class="stat-change up">↑ 12 new this week</div>
+          </div>
+          <div class="stat-card warning">
+            <div class="flex items-center justify-between">
+              <div class="stat-icon" style="background:var(--warning-bg);">💰</div>
+              <span class="badge badge-warning">Live</span>
+            </div>
+            <div class="stat-value">$3.2k</div>
+            <div class="stat-label">Today's Revenue</div>
+            <div class="stat-change up">↑ 14% vs yesterday</div>
+          </div>
+          <div class="stat-card info">
+            <div class="flex items-center justify-between">
+              <div class="stat-icon" style="background:var(--info-bg);">🚨</div>
+              <span class="badge badge-error">Pending</span>
+            </div>
+            <div class="stat-value">3</div>
+            <div class="stat-label">Missed Appointments</div>
+            <div class="stat-change down">↓ Follow-up needed</div>
+          </div>
+        </div>
+
+        <!-- Main Grid -->
+        <div class="dashboard-grid-main">
+          <!-- Revenue Chart -->
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <div style="font-weight:700;font-size:var(--text-base);">Weekly Revenue</div>
+                <div style="font-size:var(--text-sm);color:var(--text-muted);">Feb 20–26, 2026</div>
+              </div>
+              <div class="flex items-center gap-3">
+                <div class="chart-legend">
+                  <div class="legend-item"><div class="legend-dot" style="background:var(--primary);"></div>Revenue</div>
+                  <div class="legend-item"><div class="legend-dot" style="background:var(--secondary);"></div>Appointments</div>
+                </div>
+                <div class="tabs" style="padding:2px;">
+                  <div class="tab-btn active btn-sm" style="padding:4px 10px;font-size:11px;">Week</div>
+                  <div class="tab-btn btn-sm" style="padding:4px 10px;font-size:11px;">Month</div>
+                </div>
+              </div>
+            </div>
+            <div class="card-body">
+              <div class="chart-bars" id="revenueChart"></div>
+              <div class="chart-labels" id="chartLabels"></div>
+            </div>
+          </div>
+
+          <!-- Today's Appointments -->
+          <div class="card">
+            <div class="card-header">
+              <div style="font-weight:700;">Today's Schedule</div>
+              <button class="btn btn-ghost btn-sm" onclick="showPage('appointments')">View all →</button>
+            </div>
+            <div class="card-body" style="padding-top:0;">
+              <div id="todayApptList"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Bottom Grid -->
+        <div class="dashboard-grid-3">
+          <!-- Recent Activity -->
+          <div class="card">
+            <div class="card-header"><div style="font-weight:700;">Recent Activity</div></div>
+            <div class="card-body" style="padding-top:0;" id="recentActivity"></div>
+          </div>
+          <!-- Service Breakdown -->
+          <div class="card">
+            <div class="card-header"><div style="font-weight:700;">Revenue by Service</div></div>
+            <div class="card-body">
+              <div id="serviceBreakdown"></div>
+            </div>
+          </div>
+          <!-- Quick Actions -->
+          <div class="card">
+            <div class="card-header"><div style="font-weight:700;">Quick Actions</div></div>
+            <div class="card-body" style="display:flex;flex-direction:column;gap:var(--space-3);">
+              <button class="btn btn-secondary w-full" style="justify-content:flex-start;gap:12px;" onclick="openModal('addApptModal')">📅 New Appointment</button>
+              <button class="btn btn-secondary w-full" style="justify-content:flex-start;gap:12px;" onclick="openModal('addPatientModal')">👤 Add Patient</button>
+              <button class="btn btn-secondary w-full" style="justify-content:flex-start;gap:12px;" onclick="showPage('schedule')">🗓️ View Schedule</button>
+              <button class="btn btn-secondary w-full" style="justify-content:flex-start;gap:12px;" onclick="showPage('revenue')">💰 Revenue Report</button>
+              <button class="btn btn-secondary w-full" style="justify-content:flex-start;gap:12px;" onclick="showPage('automation')">🤖 Automation Rules</button>
+              <a href="super-admin.html" class="btn btn-secondary w-full" style="justify-content:flex-start;gap:12px;">⚡ Super Admin</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== APPOINTMENTS PAGE ===== -->
+      <div class="dash-page" id="page-appointments">
+        <div class="page-header">
+          <div><div class="page-title">Appointments</div><div class="page-subtitle">Manage all clinic appointments</div></div>
+          <div class="page-header-right">
+            <select class="form-control" style="width:auto;" onchange="filterAppts(this.value)">
+              <option value="all">All Status</option>
+              <option value="confirmed">Confirmed</option>
+              <option value="pending">Pending</option>
+              <option value="completed">Completed</option>
+              <option value="cancelled">Cancelled</option>
+            </select>
+            <button class="btn btn-primary" onclick="openModal('addApptModal')">+ New Appointment</button>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-body" style="padding:0;">
+            <div class="table-wrapper">
+              <table class="table" id="apptTable">
+                <thead>
+                  <tr>
+                    <th>ID</th><th>Patient</th><th>Doctor</th><th>Service</th>
+                    <th>Date & Time</th><th>Status</th><th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="apptTableBody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== PATIENTS PAGE ===== -->
+      <div class="dash-page" id="page-patients">
+        <div class="page-header">
+          <div><div class="page-title">Patients</div><div class="page-subtitle">Manage patient database</div></div>
+          <div class="page-header-right">
+            <div class="search-bar">
+              <span class="search-icon">🔍</span>
+              <input class="form-control" placeholder="Search patients..." oninput="filterPatients(this.value)" style="width:240px;padding-left:38px;">
+            </div>
+            <button class="btn btn-primary" onclick="openModal('addPatientModal')">+ Add Patient</button>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-body" style="padding:0;">
+            <div class="table-wrapper">
+              <table class="table">
+                <thead>
+                  <tr><th>Patient</th><th>ID</th><th>Age</th><th>Phone</th><th>Last Visit</th><th>Status</th><th>Actions</th></tr>
+                </thead>
+                <tbody id="patientTableBody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== CRM PAGE ===== -->
+      <div class="dash-page" id="page-crm">
+        <div class="page-header">
+          <div><div class="page-title">CRM & Patient Records</div><div class="page-subtitle">Patient history, visits, and treatment tracking</div></div>
+          <div class="page-header-right">
+            <button class="btn btn-secondary" onclick="showPage('patients')">← Back to Patients</button>
+          </div>
+        </div>
+        <div id="crmContent"></div>
+      </div>
+
+      <!-- ===== DOCTORS PAGE ===== -->
+      <div class="dash-page" id="page-doctors">
+        <div class="page-header">
+          <div><div class="page-title">Doctors</div><div class="page-subtitle">Manage physician profiles and availability</div></div>
+          <div class="page-header-right">
+            <button class="btn btn-primary" onclick="openModal('addDoctorModal')">+ Add Doctor</button>
+          </div>
+        </div>
+        <div class="grid grid-3 gap-6" id="doctorsGrid"></div>
+      </div>
+
+      <!-- ===== SCHEDULE PAGE ===== -->
+      <div class="dash-page" id="page-schedule">
+        <div class="page-header">
+          <div><div class="page-title">Schedule</div><div class="page-subtitle">Doctor availability and appointments timeline</div></div>
+          <div class="page-header-right">
+            <select class="form-control" style="width:auto;">
+              <option>All Doctors</option>
+              <option>Dr. Amir Aliyev</option>
+              <option>Dr. Lena Karimova</option>
+              <option>Dr. Rustam Yusupov</option>
+            </select>
+            <button class="btn btn-primary" onclick="openModal('addApptModal')">+ Book Slot</button>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-body" id="scheduleContent"></div>
+        </div>
+      </div>
+
+      <!-- ===== SERVICES PAGE ===== -->
+      <div class="dash-page" id="page-services">
+        <div class="page-header">
+          <div><div class="page-title">Services</div><div class="page-subtitle">Manage clinic service catalog and pricing</div></div>
+          <div class="page-header-right">
+            <button class="btn btn-primary" onclick="openModal('addServiceModal')">+ Add Service</button>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-body" style="padding:0;">
+            <div class="table-wrapper">
+              <table class="table">
+                <thead><tr><th>Service</th><th>Category</th><th>Duration</th><th>Price</th><th>Bookings</th><th>Status</th><th>Actions</th></tr></thead>
+                <tbody id="servicesTableBody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== STAFF PAGE ===== -->
+      <div class="dash-page" id="page-staff">
+        <div class="page-header">
+          <div><div class="page-title">Staff & Roles</div><div class="page-subtitle">Manage team members and access permissions</div></div>
+          <div class="page-header-right">
+            <button class="btn btn-primary" onclick="openModal('addStaffModal')">+ Add Staff</button>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-body" style="padding:0;">
+            <div class="table-wrapper">
+              <table class="table">
+                <thead><tr><th>Staff Member</th><th>Role</th><th>Department</th><th>Email</th><th>Status</th><th>Last Active</th><th>Actions</th></tr></thead>
+                <tbody id="staffTableBody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== REVENUE PAGE ===== -->
+      <div class="dash-page" id="page-revenue">
+        <div class="page-header">
+          <div><div class="page-title">Revenue Dashboard</div><div class="page-subtitle">Financial overview and income tracking</div></div>
+          <div class="page-header-right">
+            <select class="form-control" style="width:auto;" id="revPeriod" onchange="updateRevenuePage()">
+              <option value="daily">Daily</option>
+              <option value="weekly">Weekly</option>
+              <option value="monthly" selected>Monthly</option>
+            </select>
+            <button class="btn btn-secondary">📥 Export</button>
+          </div>
+        </div>
+        <div id="revenuePageContent"></div>
+      </div>
+
+      <!-- ===== PAYMENTS PAGE ===== -->
+      <div class="dash-page" id="page-payments">
+        <div class="page-header">
+          <div><div class="page-title">Payments</div><div class="page-subtitle">Track all payment transactions</div></div>
+          <div class="page-header-right">
+            <button class="btn btn-secondary">📥 Export CSV</button>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-body" style="padding:0;">
+            <div class="table-wrapper">
+              <table class="table">
+                <thead><tr><th>Transaction ID</th><th>Patient</th><th>Service</th><th>Amount</th><th>Method</th><th>Date</th><th>Status</th></tr></thead>
+                <tbody id="paymentsTableBody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== AUTOMATION PAGE ===== -->
+      <div class="dash-page" id="page-automation">
+        <div class="page-header">
+          <div><div class="page-title">Automation</div><div class="page-subtitle">Reminders, follow-ups, and missed appointment tracking</div></div>
+          <div class="page-header-right">
+            <button class="btn btn-primary">+ New Rule</button>
+          </div>
+        </div>
+        <div id="automationContent"></div>
+      </div>
+
+      <!-- ===== ANALYTICS PAGE ===== -->
+      <div class="dash-page" id="page-analytics">
+        <div class="page-header">
+          <div><div class="page-title">Analytics</div><div class="page-subtitle">Clinic performance metrics and insights</div></div>
+          <div class="page-header-right">
+            <div class="tabs">
+              <div class="tab-btn active" onclick="switchAnalytics('daily',this)">Daily</div>
+              <div class="tab-btn" onclick="switchAnalytics('weekly',this)">Weekly</div>
+              <div class="tab-btn" onclick="switchAnalytics('monthly',this)">Monthly</div>
+            </div>
+          </div>
+        </div>
+        <div id="analyticsContent"></div>
+      </div>
+
+
+      <!-- ===== TELEGRAM PAGE ===== -->
+      <div class="dash-page" id="page-telegram">
+        <div class="page-header">
+          <div>
+            <div class="page-title">✈️ Telegram Bot</div>
+            <div class="page-subtitle">Bemorlar bilan Telegram orqali muloqot va eslatmalar</div>
+          </div>
+          <div class="page-header-right">
+            <div style="display:flex;align-items:center;gap:8px;padding:8px 16px;background:#e0f2fe;border-radius:12px;color:#0088cc;font-weight:700;font-size:13px;">
+              <span style="width:8px;height:8px;background:#0088cc;border-radius:50%;animation:pulse-ring 2s infinite;"></span>
+              Bot faol · @MediCareProBot
+            </div>
+          </div>
+        </div>
+        <div class="dashboard-stats">
+          <div class="stat-card primary"><div class="stat-icon" style="background:#e0f2fe;">✈️</div><div class="stat-value">1,284</div><div class="stat-label">Yuborilgan eslatmalar</div><div class="stat-change up">Bu oy</div></div>
+          <div class="stat-card success"><div class="stat-icon" style="background:var(--success-bg);">✅</div><div class="stat-value">96.2%</div><div class="stat-label">O'qish darajasi</div><div class="stat-change up">↑ 2.1%</div></div>
+          <div class="stat-card warning"><div class="stat-icon" style="background:var(--warning-bg);">🚨</div><div class="stat-value">3</div><div class="stat-label">Kelmagan (bugun)</div><div class="stat-change down">Murojaat kerak</div></div>
+          <div class="stat-card info"><div class="stat-icon" style="background:var(--info-bg);">📈</div><div class="stat-value">65%</div><div class="stat-label">Kelmagan kamayishi</div><div class="stat-change up">Avtomatizatsiyadan beri</div></div>
+        </div>
+        <div style="display:grid;grid-template-columns:3fr 2fr;gap:var(--space-6);margin-top:var(--space-6);">
+          <div class="card">
+            <div class="card-header"><div style="font-weight:700;">Eslatma qoidalari</div><button class="btn btn-primary btn-sm" onclick="showToast('success','Qoida','Yangi qoida qo\'shildi')">+ Yangi qoida</button></div>
+            <div class="card-body" style="display:flex;flex-direction:column;gap:var(--space-4);">
+              <div id="tgRulesList"></div>
+            </div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:var(--space-4);">
+            <div class="card">
+              <div class="card-header"><div style="font-weight:700;">Tezkor yuborish</div></div>
+              <div class="card-body" style="display:flex;flex-direction:column;gap:10px;">
+                <button class="btn btn-primary" onclick="tgSend('24h')">📅 Ertangi qabul eslatmasi</button>
+                <button class="btn btn-secondary" onclick="tgSend('2h')">⏰ 2 soatlik eslatma</button>
+                <button class="btn" style="background:#fef2f2;color:#dc2626;border:1px solid #fca5a5;border-radius:12px;padding:10px;font-weight:700;cursor:pointer;" onclick="tgSend('missed')">🚨 Kelmagan bemorlar</button>
+                <button class="btn btn-ghost" onclick="tgSend('return')">🔄 Qaytish eslatmasi (12 ta)</button>
+                <button class="btn btn-ghost" onclick="tgSend('birthday')">🎂 Tug'ilgan kun (2 ta bugun)</button>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-header"><div style="font-weight:700;">Oxirgi xabarlar</div></div>
+              <div class="card-body" style="display:flex;flex-direction:column;gap:8px;">
+                <div style="padding:10px;background:#f0f9ff;border-radius:12px;font-size:12px;"><strong>Omar Saidov</strong> — Qabul eslatmasi ✅ O'qildi · 2 soat oldin</div>
+                <div style="padding:10px;background:#f0f9ff;border-radius:12px;font-size:12px;"><strong>Nilufar Rashidova</strong> — Eslatma ✅ O'qildi · 3 soat oldin</div>
+                <div style="padding:10px;background:#fef9c3;border-radius:12px;font-size:12px;"><strong>Jasur Raimov</strong> — Kelmadi bildirishnomasi ⏳ Yuborildi</div>
+                <div style="padding:10px;background:#f0fdf4;border-radius:12px;font-size:12px;"><strong>Zulfiya Mirzayeva</strong> — Qaytish eslatmasi ✅ Tasdiqladi</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- end dashboard-content -->
+  </main>
+</div><!-- end dashboard-wrapper -->
+
+<!-- ADD APPOINTMENT MODAL -->
+<div class="modal-overlay" id="addApptModal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">📅 New Appointment</div>
+      <div class="modal-close" onclick="closeModal('addApptModal')">✕</div>
+    </div>
+    <div class="modal-body" style="display:flex;flex-direction:column;gap:var(--space-4);">
+      <div class="form-group">
+        <label class="form-label">Patient <span class="required">*</span></label>
+        <select class="form-control"><option>Select patient...</option><option>Omar Saidov</option><option>Nilufar Rashidova</option><option>Bobur Toshmatov</option></select>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:var(--space-3);">
+        <div class="form-group">
+          <label class="form-label">Doctor</label>
+          <select class="form-control"><option>Dr. Aliyev</option><option>Dr. Karimova</option><option>Dr. Yusupov</option></select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Service</label>
+          <select class="form-control"><option>Cardiology</option><option>Neurology</option><option>General</option></select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Date</label>
+          <input type="date" class="form-control">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Time</label>
+          <select class="form-control"><option>9:00 AM</option><option>10:00 AM</option><option>11:00 AM</option><option>2:00 PM</option></select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Notes</label>
+        <textarea class="form-control" rows="2" placeholder="Additional notes..."></textarea>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('addApptModal')">Cancel</button>
+      <button class="btn btn-primary" onclick="addAppointment()">✅ Book Appointment</button>
+    </div>
+  </div>
+</div>
+
+<!-- ADD PATIENT MODAL -->
+<div class="modal-overlay" id="addPatientModal">
+  <div class="modal modal-lg">
+    <div class="modal-header">
+      <div class="modal-title">👤 Add New Patient</div>
+      <div class="modal-close" onclick="closeModal('addPatientModal')">✕</div>
+    </div>
+    <div class="modal-body" style="display:flex;flex-direction:column;gap:var(--space-4);">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:var(--space-4);">
+        <div class="form-group"><label class="form-label">First Name <span class="required">*</span></label><input type="text" class="form-control" placeholder="First name"></div>
+        <div class="form-group"><label class="form-label">Last Name <span class="required">*</span></label><input type="text" class="form-control" placeholder="Last name"></div>
+        <div class="form-group"><label class="form-label">Email</label><input type="email" class="form-control" placeholder="email@example.com"></div>
+        <div class="form-group"><label class="form-label">Phone <span class="required">*</span></label><input type="tel" class="form-control" placeholder="+1 (555) ..."></div>
+        <div class="form-group"><label class="form-label">Date of Birth</label><input type="date" class="form-control"></div>
+        <div class="form-group"><label class="form-label">Gender</label><select class="form-control"><option>Male</option><option>Female</option><option>Other</option></select></div>
+        <div class="form-group"><label class="form-label">Blood Type</label><select class="form-control"><option>A+</option><option>A-</option><option>B+</option><option>B-</option><option>O+</option><option>O-</option><option>AB+</option><option>AB-</option></select></div>
+        <div class="form-group"><label class="form-label">Insurance</label><select class="form-control"><option>None</option><option>BlueCross</option><option>Aetna</option><option>United Health</option></select></div>
+      </div>
+      <div class="form-group"><label class="form-label">Address</label><input type="text" class="form-control" placeholder="Street address"></div>
+      <div class="form-group"><label class="form-label">Medical Notes</label><textarea class="form-control" rows="3" placeholder="Allergies, conditions, medications..."></textarea></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('addPatientModal')">Cancel</button>
+      <button class="btn btn-primary" onclick="addPatient()">✅ Add Patient</button>
+    </div>
+  </div>
+</div>
+
+<!-- ADD DOCTOR MODAL -->
+<div class="modal-overlay" id="addDoctorModal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">👨‍⚕️ Add Doctor</div>
+      <div class="modal-close" onclick="closeModal('addDoctorModal')">✕</div>
+    </div>
+    <div class="modal-body" style="display:flex;flex-direction:column;gap:var(--space-4);">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:var(--space-3);">
+        <div class="form-group"><label class="form-label">First Name</label><input type="text" class="form-control" placeholder="Dr. First"></div>
+        <div class="form-group"><label class="form-label">Last Name</label><input type="text" class="form-control" placeholder="Last name"></div>
+      </div>
+      <div class="form-group"><label class="form-label">Specialty</label><select class="form-control"><option>Cardiology</option><option>Neurology</option><option>Orthopedics</option><option>General Practice</option></select></div>
+      <div class="form-group"><label class="form-label">Email</label><input type="email" class="form-control"></div>
+      <div class="form-group"><label class="form-label">Experience (years)</label><input type="number" class="form-control" value="5" min="1" max="50"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('addDoctorModal')">Cancel</button>
+      <button class="btn btn-primary" onclick="addDoctor()">✅ Add Doctor</button>
+    </div>
+  </div>
+</div>
+
+<!-- ADD SERVICE MODAL -->
+<div class="modal-overlay" id="addServiceModal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">🩺 Add Service</div>
+      <div class="modal-close" onclick="closeModal('addServiceModal')">✕</div>
+    </div>
+    <div class="modal-body" style="display:flex;flex-direction:column;gap:var(--space-4);">
+      <div class="form-group"><label class="form-label">Service Name</label><input type="text" class="form-control" placeholder="e.g. ECG Test"></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:var(--space-3);">
+        <div class="form-group"><label class="form-label">Category</label><select class="form-control"><option>Cardiology</option><option>Diagnostics</option><option>Surgery</option><option>Consultation</option></select></div>
+        <div class="form-group"><label class="form-label">Duration (min)</label><input type="number" class="form-control" value="30"></div>
+        <div class="form-group"><label class="form-label">Price ($)</label><input type="number" class="form-control" value="100"></div>
+        <div class="form-group"><label class="form-label">Status</label><select class="form-control"><option>Active</option><option>Inactive</option></select></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('addServiceModal')">Cancel</button>
+      <button class="btn btn-primary" onclick="addService()">✅ Add Service</button>
+    </div>
+  </div>
+</div>
+
+<!-- ADD STAFF MODAL -->
+<div class="modal-overlay" id="addStaffModal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">👔 Add Staff Member</div>
+      <div class="modal-close" onclick="closeModal('addStaffModal')">✕</div>
+    </div>
+    <div class="modal-body" style="display:flex;flex-direction:column;gap:var(--space-4);">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:var(--space-3);">
+        <div class="form-group"><label class="form-label">First Name</label><input type="text" class="form-control"></div>
+        <div class="form-group"><label class="form-label">Last Name</label><input type="text" class="form-control"></div>
+      </div>
+      <div class="form-group"><label class="form-label">Email</label><input type="email" class="form-control"></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:var(--space-3);">
+        <div class="form-group"><label class="form-label">Role</label><select class="form-control"><option>Admin</option><option>Reception</option><option>Doctor</option><option>Nurse</option></select></div>
+        <div class="form-group"><label class="form-label">Department</label><select class="form-control"><option>General</option><option>Cardiology</option><option>Neurology</option></select></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('addStaffModal')">Cancel</button>
+      <button class="btn btn-primary" onclick="addStaff()">✅ Add Staff</button>
+    </div>
+  </div>
+</div>
+
+<script src="js/lang.js"></script>
+<script src="js/api.js"></script>
+<script src="js/dashboard.js"></script>
+<script>
+const LANGS = ['uz','ru','en'];
+const LANG_LABELS = {uz:'UZ',ru:'RU',en:'EN'};
+let _lang = localStorage.getItem('mc_lang') || 'uz';
+document.getElementById('langToggle').textContent = LANG_LABELS[_lang];
+function cycleLang() {
+  const idx = LANGS.indexOf(_lang);
+  _lang = LANGS[(idx+1)%LANGS.length];
+  localStorage.setItem('mc_lang', _lang);
+  document.getElementById('langToggle').textContent = LANG_LABELS[_lang];
+  showToast('info', 'Til / Язык / Language', {uz:'Uzbek tili tanlandi',ru:'Выбран русский язык',en:'English selected'}[_lang]);
+}
+function tgSend(type) {
+  const msgs = {  '24h':'Ertangi qabul eslatmalari yuborildi! (8 ta bemor)', '2h':'2 soatlik eslatmalar yuborildi! (3 ta)',
+    'missed':'Kelmagan bemorlar eslatmasi yuborildi!', 'return':'Qaytish eslatmalari yuborildi! (12 ta)', 'birthday':"Tug'ilgan kun tabriknomasi yuborildi!" };
+  showToast('success','✈️ Telegram',msgs[type]||'Yuborildi!');
+}
+document.addEventListener('DOMContentLoaded', async () => {
+  // Show logged-in user info in sidebar
+  const user = (window.API && API.getUser()) || null;
+  if (user) {
+    const nameEl = document.querySelector('.sidebar-user-name');
+    const roleEl = document.querySelector('.sidebar-user-role');
+    const avatarEl = document.querySelector('.sidebar-user-avatar');
+    const roleMap = { admin: 'Bosh Admin', reception: 'Qabulchi', doctor: 'Shifokor' };
+    if (nameEl) nameEl.textContent = user.name;
+    if (roleEl) roleEl.textContent = roleMap[user.role] || user.role;
+    if (avatarEl) avatarEl.textContent = user.name.split(' ').map(n=>n[0]).join('').slice(0,2).toUpperCase();
+  }
+  // Load live stats from backend (if server is running)
+  if (window.LiveData) await LiveData.init();
+  renderDashboardHome();
+  // Render telegram rules on page load
+  const rules = [
+    {icon:'📅',name:'Qabul eslatmasi (24 soat)',desc:'Qabuldan 24 soat oldin SMS va Telegram xabar',on:true,sent:892},
+    {icon:'⏰',name:'Qabul eslatmasi (2 soat)',desc:'Qabuldan 2 soat oldin Telegram eslatma',on:true,sent:756},
+    {icon:'💬',name:'Takroriy tashrif (3 kun)',desc:'Qabuldan 3 kun keyin kuzatuv xabari',on:true,sent:284},
+    {icon:'🚨',name:'Kelmagan bemor bildirishnomasi',desc:'Kelmagan bemor haqida qabulxonaga xabar',on:true,sent:47},
+    {icon:'🔄',name:'Qaytish eslatmasi',desc:'Shifokor belgilagan sana kelganda eslatma yuborish',on:true,sent:126},
+    {icon:'🎂',name:"Tug'ilgan kun tabrigi",desc:"Bemor tug'ilgan kunida avtomatik tabrik",on:false,sent:0},
+  ];
+  const el = document.getElementById('tgRulesList');
+  if (el) el.innerHTML = rules.map(r=>`
+  <div style="display:flex;align-items:center;gap:16px;padding:16px;background:var(--bg-secondary);border-radius:16px;border:1px solid var(--border-light);">
+    <div style="font-size:28px;">${r.icon}</div>
+    <div style="flex:1;">
+      <div style="font-weight:700;font-size:14px;margin-bottom:2px;">${r.name}</div>
+      <div style="font-size:13px;color:var(--text-muted);">${r.desc}</div>
+      <div style="font-size:11px;color:var(--text-muted);margin-top:4px;">Yuborildi: <strong>${r.sent}</strong> bu oy</div>
+    </div>
+    <div style="width:44px;height:24px;background:${r.on?'var(--primary)':'var(--gray-200)'};border-radius:20px;cursor:pointer;position:relative;transition:background 0.2s;" onclick="toggleRule(this)">
+      <div style="width:18px;height:18px;background:white;border-radius:50%;position:absolute;top:3px;${r.on?'right:3px':'left:3px'};transition:0.2s;box-shadow:0 1px 3px rgba(0,0,0,0.2);"></div>
+    </div>
+  </div>`).join('');
+});
+</script>
+</body>
+</html>
